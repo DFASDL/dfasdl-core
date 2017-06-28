@@ -1,5 +1,7 @@
 # DFASDL - Data Format and Semantics Description Language
 
+[ ![Download](https://api.bintray.com/packages/wegtam/dfasdl/dfasdl-core/images/download.svg) ](https://bintray.com/wegtam/dfasdl/dfasdl-core/_latestVersion)
+
 The DFASDL is a language based upon [XML
 Schema](http://www.w3.org/XML/Schema) that can be used to describe data
 formats and additionally the semantics of it.
@@ -13,3 +15,4 @@ definition (xsd) and the official specification.
 
 It is cross build for scala 2.11 and 2.12.
 
+Releases are published on bintray and should be synced to maven central.
