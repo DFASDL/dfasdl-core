@@ -1,0 +1,1282 @@
+= DFASDL - Spezifikation
+Jens Grassel; Andre Schütz <tech@wegtam.com>
+:doctype: book
+:toc: left
+:toc-title: Inhaltsverzeichnis
+:numbered:
+:icons: font
+:source-highlighter: coderay
+
+[[preamble]]
+== Vorwort ==
+Die DFASDL-Spezifikation enthält die Beschreibung aller derzeit gültigen
+Elemente der Data Format and Semantics Description Language.
+
+Version:: {project-version}
+
+[source,plain]
+----
+Copyright (c) 2014 - 2017 Contributors as noted in the AUTHORS.md file
+
+The DFASDL specification is distributed under the terms of the
+Creative Commons Attribution 4.0 International license (CC BY 4.0).
+----
+
+[[structure]]
+== Struktur ==
+
+. Das Wurzelelement eines DFASDL-Dokuments ist das Element <<e-dfasdl,
+dfasdl>>.
+
+=== Erlaubte Schachtelungen ===
+
+Die Tabelle <<nested-elements>> verdeutlicht die erlaubten
+Elementverschachtelungen innerhalb eines DFASDL-Dokuments.
+Alle in der *Kopfzeile* definierten Element können die entsprechend
+markierten Elemente als Kindelement enthalten.
+
+[[nested-elements]]
+.Erlaubte Elementschachtelungen
+|==========================================================================================================
+|            | <<e-celem>> | <<e-choice>> | <<e-cid>> | <<e-const>> | <<e-elem>> | <<e-fixseq>> | <<e-seq>>
+| <<e-bin>>        | x     |              | x         | x           | x          | x            | x
+| <<e-bin64>>      | x     |              | x         | x           | x          | x            | x
+| <<e-binHex>>     | x     |              | x         | x           | x          | x            | x
+| <<e-celem>>      | x     | x            |           |             |            |              |
+| <<e-choice>>     |       |              |           |             | x          | x            | x
+| <<e-cid>>        | x     |              |           |             | x          | x            | x
+| <<e-const>>      |       |              |           |             | x          | x            | x
+| <<e-date>>       | x     |              |           |             | x          | x            | x
+| <<e-datetime>>   | x     |              |           |             | x          | x            | x
+| <<e-elem>>       |       |              |           |             | x          | x            | x
+| <<e-fixseq>>     |       |              |           |             | x          | x            | x
+| <<e-formatnum>>  | x     |              | x         | x           | x          | x            | x
+| <<e-formatstr>>  | x     |              | x         | x           | x          | x            | x
+| <<e-formattime>> | x     |              |           |             | x          | x            | x
+| <<e-num>>        | x     |              | x         | x           | x          | x            | x
+| <<e-ref>>        |       |              |           |             | x          | x            | x
+| <<e-seq>>        |       |              |           |             | x          | x            | x
+| <<e-str>>        | x     |              | x         | x           | x          | x            | x
+| <<e-time>>       | x     |              |           |             | x          | x            | x
+|==========================================================================================================
+
+[[element-groups]]
+=== Elementgruppen ===
+
+Um die Elemente leichter zu beschreiben, sind sie in spezifischen Gruppen organisiert.
+
+[[eg-structure]]
+==== Struktur-Elemente-Gruppe ====
+
+Struktur-Elemente werden für die Beschreibung der Struktur genutzt und bilden den strukturellen Rahmen der Datenstruktur.
+
+Vertreter:
+
+. <<e-celem>>
+. <<e-choice>>
+. <<e-cid>>
+. <<e-elem>>
+. <<e-fixseq>>
+. <<e-ref>>
+. <<e-seq>>
+
+[[eg-data]]
+==== Daten-Elemente-Gruppe ====
+
+Daten-Elemente beinhalten keine anderen Elemente und sind Container für die Daten.
+
+Vertreter:
+
+. <<e-bin>>
+. <<e-bin64>>
+. <<e-binHex>>
+. <<e-formatnum>>
+. <<e-formatstr>>
+. <<e-num>>
+. <<e-str>>
+
+[[eg-time]]
+==== Zeit-Elemente-Gruppe ====
+
+Zeit-Elemente beinhalten keine anderen Elemente und sind Container für Zeitangaben und/oder Datumsangaben.
+
+Vertreter:
+
+. <<e-date>>
+. <<e-datetime>>
+. <<e-formattime>>
+. <<e-time>>
+
+[[eg-expression]]
+==== Ausdrucks-Elemente-Gruppe ====
+
+Ausdrucks-Elemente definieren finale Ausdrücke oder zu bewertende Konstrukte.
+
+Vertreter:
+
+. <<e-const>>
+. <<e-sxp>>
+
+[[elements]]
+== Elemente ==
+
+[[e-bin]]
+=== bin ===
+Ein Element, welches binäre Daten beinhaltet.
+
+==== Eigenschaften ====
+
+. Es wird eine <<a-byteOrder>> angegeben.
+. Eine Kodierung der Daten kann über <<a-encoding>> angegeben werden (z.B.
+  Base32, Base64, Base85).
+. Mime Media Typ kann über das <<a-mime>> Attribut angegeben werden.
+
+.Definition
+[source,xml]
+----
+<bin byteOrder="littleEndian" id="ID1"/>
+<bin encoding="Base64" id="ID2"/>
+<bin mime="text/plain" id="ID3"/>
+----
+
+.Erlaubte Attribute
+****
+<<a-db-column-name>>, <<generic-attributes>>, <<a-byteOrder>>,
+<<a-mime>>
+****
+
+[[e-bin64]]
+=== bin64 ===
+Dieses Element enhält Binärdaten, die via Base64 kodiert sind.
+
+.Erlaubte Attribute
+****
+<<a-db-column-name>>, <<generic-attributes>>
+****
+
+[[e-binHex]]
+=== binHex ===
+Ein Elemente, welches hexadezimal kodierte Daten enthält.
+
+.Erlaubte Attribute
+****
+<<a-db-column-name>>, <<generic-attributes>>
+****
+
+[[e-celem]]
+=== celem ===
+Ein Choice-Container-Element definiert die kleinste zu beschreibende
+Einheit innerhalb einer Choice. Es ist rekursiv definiert, d.h. es kann
+andere Elemente enthalten.
+
+[source,xml]
+----
+<choice id="card">
+  <celem id="row" s="semantic">
+    <num id="row_num"/>
+    <str id="row_str"/>
+  </celem>
+</choice>
+----
+
+. Ein einfaches Choice-Container-Element enthält keinen Wert!
+. Ein einfaches Choice-Container-Element kann andere Elemente enthalten.
+. Ein Choice-Container-Element kann nur direkt unterhalb von
+<<e-choice>> Elementen vorkommen.
+
+.Erlaubte Attribute
+****
+<<generic-attributes>>
+****
+
+.Erlaubte Elemente
+****
+<<e-celem>>, <<e-cid>>, Datenelemente, Ausdruckselement
+****
+
+[[e-choice]]
+=== choice ===
+Ein Element, mit dem Wahlmöglichkeiten in der Struktur abgebildet werden
+können, so dass die Daten nicht von vornherein ein bestimmtes Format
+haben müssen.
+
+. Matching einer Struktur oder von Elementen
+. Innerhalb einer Choice müssen Elemente in einem oder mehreren
+<<e-celem>> stehen.
+. Die Reihenfolge der Datenelemente bestimmt das Matching. Daher sollten
+spezifische Datenelemente vor einem <<e-str>> Element definiert werden.
+. Das letzte Daten-Element einer Choice, die sich innerhalb einer
+Sequenz befindet, darf kein <<a-stop-sign>> enthalten.
+
+.Definition
+[source,xml]
+----
+<choice id="card">
+  <celem id="row1">
+    <num id="row1_num" start-sign="\d" stop-sign=";"/>
+    <str id="row1_str" start-sign="NAME" stop-sign=":"/>
+  </celem>
+  <celem id="row2">
+    <num id="row2_num" start-sign="\d" stop-sign=";" />
+    <str id="row2_str" start-sign="NAME"/>
+  </celem>
+</choice>
+----
+
+.Erlaubte Attribute
+****
+<<generic-attributes>>
+****
+
+.Erlaubte Elemente
+****
+<<e-celem>>
+****
+
+[[e-cid]]
+=== cid ===
+Ein Element, welches als Schachtelelement für ein Daten-Element genutzt
+werden kann.
+
+. Eine benutzerdefinierte ID dient als Schachtelelement für ein
+Datenelement des Typs string oder numerical.
+. Eine benutzerdefinierte ID kann eine Klasse (<<a-class>>) definieren.
+
+.Definition
+[source,xml]
+----
+<elem id="someElement">
+  <cid id="myCustomID" class="myCustomClass">
+    <str/>
+  </cid>
+  <str id="ID"/>
+</elem>
+ 
+<seq id="someList" min="2">
+  <elem id="structure">
+    <cid id="anotherCustomID" class="nestedClass">
+      <str id="ID"/>
+    </cid>
+    <str id="anotherID"/>
+  </elem>
+</seq>
+----
+
+.Erlaubte Attribute
+****
+<<generic-attributes>>
+****
+
+.Erlaubte Elemente
+****
+Datenelemente
+****
+
+[[e-const]]
+=== const ===
+Eine Konstante ist ein Schachtelelement für genau ein Element aus dem
+Bereich Datenelemente.
+
+.Definition
+[source,xml]
+----
+<const id="foo">
+  <str id="fooStr">Foo</str>
+</const>
+ 
+<const id="bar">
+  <num id="barNum">123</num>
+</const>
+----
+
+.Erlaubte Attribute
+****
+<<generic-attributes>>
+****
+
+.Erlaubte Elemente
+****
+Datenelemente
+****
+
+[[e-date]]
+=== date ===
+Ein Element, welches ein Datum beschreibt. Das Datum muß im ISO-Format
+(`yyyy-MM-dd`) vorliegen!
+
+.Definition
+[source,xml]
+----
+<date id="dateField/>
+----
+
+.Erlaubte Attribute
+****
+<<generic-attributes>>, <<a-db-column-name>>, <<a-db-foreign-key>>, <<a-xml-attribute-name>>,
+<<a-xml-attribute-parent>>, <<a-xml-element-name>>
+****
+
+[[e-datetime]]
+=== datetime ===
+Ein Element, das ein komplettes Datum inklusive Zeit (Zeitstempel)
+beschreibt. Der Zeitstempel muß im ISO-Format vorliegen!
+
+.Definition
+[source,xml]
+----
+<datetime id="dateTime"/>
+----
+
+.Erlaubte Attribute
+****
+<<generic-attributes>>, <<a-db-column-name>>, <<a-db-foreign-key>>, <<a-xml-attribute-name>>,
+<<a-xml-attribute-parent>>, <<a-xml-element-name>>
+****
+
+[[e-dfasdl]]
+=== dfasdl ===
+Das Wurzelelement eines DFASDL-Dokuments beinhaltet Attribute, die das
+Dokument beschreiben.
+
+. Es darf nur einmal im gesamten Dokument und zwar auf der obersten Ebene vorkommen.
+. Der genutzte semantische Raum wird im Attribut <<a-semantic, semantic>> definiert.
+. Das Attribute <<a-default-encoding, default-encoding>> kann genutzt werden, um
+eine Vorgabe für nicht definierte <<a-encoding, encoding Attribute>> an einzelnen
+Elementen zu setzen.
+
+.Definition
+[source,xml]
+----
+<dfasdl xmlns="http://www.dfasdl.org/DFASDL" semantic="niem">
+  ...
+</dfasdl>
+----
+
+.Erlaubte Attribute
+****
+<<root-attributes>>
+****
+
+.Erlaubte Elemente
+****
+Alle Elemente außer dem Wurzelelement (<<e-dfasdl>>).
+****
+
+[[e-elem]]
+=== elem ===
+Ein Element definiert die kleinste Einheit innerhalb eines Datenformats.
+Es ist rekursiv definiert, d.h. es kann andere Elemente enthalten.
+
+. Ein einfaches Element enthält keinen Wert!
+. Ein einfaches Element kann andere Elemente enthalten.
+
+.Definition
+[source,xml]
+----
+<elem id="foo">
+  <seq id="bar" max="2">
+    <str id="foobar"/>
+  </seq>
+</elem>
+<elem id="empty"/>
+----
+
+.Erlaubte Attribute
+****
+<<generic-attributes>>
+****
+
+.Erlaubte Elemente
+****
+Alle Elemente außer dem Wurzelelement (<<e-dfasdl>>).
+****
+
+[[e-fixseq]]
+=== fixseq ===
+Eine fixe Sequenz gibt an, daß ihre Kindstruktur sich wiederholt und
+eine endliche Menge an Elementen beinhaltet.
+
+. Eine <<e-fixseq>> hat die gleichen Eigenschaften, wie eine <<e-seq>>,
+mit der Ausnahme, dass man eine genaue Angabe der Anzahl der
+beinhalteten Elemente machen muß.
+. Zur Angabe der Anzahl der vorhandenen Elemente wird das <<a-count>>
+Attribut verwendet.
+. Durch das <<a-stop-sign>> kann eine Zeichenkette angegeben werden,
+welche die Sequenz beendet. Wenn dieses <<a-stop-sign>> in den Daten
+auftaucht, wird die Sequenz beendet und die Abarbeitung weiterer
+Elemente, welche nach der Sequenz kommen, fortgesetzt.
+
+.Definition
+[source,xml]
+----
+<fixseq id="accountList" count="2">
+  <elem id="account">
+    <str id="number"/>
+  </elem>
+</fixseq>
+----
+
+.Erlaubte Attribute
+****
+<<generic-attributes>>, <<a-db-select>>, <<a-db-insert>>,
+<<a-db-primary-key>>, <<a-db-update>>, <<a-count>>, <<a-keepID>>
+****
+
+.Erlaubte Elemente
+****
+Strukturelemente, Datenelemente
+****
+
+[[e-formatnum]]
+=== formatnum ===
+Ein numerisches Datenelement, das dem angegebenen Format (<<a-format>>)
+genügen muß.
+
+Die folgenden Zeichen sind zulässig sowohl in den Daten als auch in der
+Wertangabe des Attributs <<a-defaultnum>>:
+
+. Minus (`-`)
+. Ziffern (`0-9`)
+. Punkt (`.`)
+. Komma (`,`)
+
+.Definition
+[source,xml]
+----
+<formatnum format="(\d\d\d)" id="ID" max-digits="12"/>
+<formatnum decimal-separator="." format="([0-9]{1,3}\.\d{1,2})" id="ID2"
+max-digits="3" max-precision="2"/>
+----
+
+IMPORTANT: Der Standardwert von <<a-decimal-separator>> ist das Komma
+(`,`). Ist kein Wert für <<a-decimal-separator>> angegeben, wird dieser
+Standardwert genommen.
+
+CAUTION: Der zu matchende Teil des <<a-format>> Attributes muss innerhalb einer
+Gruppe `(...)` stehen!
+
+.Erlaubte Attribute
+****
+<<generic-attributes>>, <<a-db-auto-inc>>, <<a-db-column-name>>, <<a-db-foreign-key>>, <<a-decimal-separator>>,
+<<a-defaultnum>>, <<a-format>>, <<a-max-digits>>, <<a-max-precision>>, <<a-unique>>,
+<<a-xml-attribute-name>>, <<a-xml-attribute-parent>>, <<a-xml-element-name>>
+****
+
+CAUTION: Wenn das Dezimaltrennzeichen behalten werden soll, muss es über das
+Attribut <<a-decimal-separator>> angegeben werden!
+
+[[e-formatstr]]
+=== formatstr ===
+Ein Element für Zeichenketten, welches das Format (<<a-format>>)
+definieren muß.
+
+.Definition
+[source,xml]
+----
+<formatstr id="formatA" format="(\w\w\d)"/>
+<formatstr id="formatB" format="(\w{1,10})"/>
+<formatstr id="formatC" format=".*?:(.*)"/>
+----
+
+CAUTION: Der zu matchende Teil muss innerhalb einer Gruppe `(...)` stehen!
+
+.Erlaubte Attribute
+****
+<<generic-attributes>>, <<a-db-column-name>>, <<a-db-foreign-key>>, <<a-defaultstr>>,
+<<a-format>>, <<a-trim>>, <<a-unique>>, <<a-xml-attribute-name>>,
+<<a-xml-attribute-parent>>, <<a-xml-element-name>>
+****
+
+[[e-formattime]]
+=== formattime ===
+Für Datums- und Zeitangaben, die nicht der ISO-Notation entsprechen, kann
+dieses Element verwendet werden. Die Angabe für das Attribut<<a-format>> muß
+einen für den
+link:https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html[Java
+DateTimeFormatter] verarbeitbaren Wert enthalten!
+
+.Definition
+[source,xml]
+----
+<formattime id="my-time-is-now" format="dd.MM.yyyy HH:mm:ss X"/>
+----
+
+.Erlaubte Attribute
+****
+<<generic-attributes>>, <<a-db-column-name>>, <<a-db-foreign-key>>, <<a-defaultstr>>, <<a-format>>,
+<<a-unique>>, <<a-xml-attribute-name>>, <<a-xml-attribute-parent>>, <<a-xml-element-name>>
+****
+
+[[e-num]]
+=== num ===
+Ein Datenelement, das einen numerischen Wert beinhaltet.
+
+. Ein numerisches Element darf nur Ziffern und gegebenenfalls ein
+Minuszeichen als Startzeichen enthalten.
+. Ein numerisches Element kann eine exakt einzuhaltende Ziffernanzahl
+(<<a-length>>) definieren.
+.. Das Minuszeichen wird bei der Berechnung der Länge nicht
+berücksichtigt.
+. Ein numerisches Element kann eine maximal zu berücksichtigende
+Ziffernanzahl (<<a-max-digits>>) definieren.
+.. Das Minuszeichen wird bei der Anzahl der maximalen Ziffernanzahl nicht
+berücksichtigt.
+. Ein numerisches Element kann die Anzahl der Nachkommastellen
+(<<a-precision>>) definieren.
+. Ein numerisches Element kann einen Standardwert (<<a-defaultnum>>)
+definieren, der bei fehlenden Datensätzen eingefügt wird.
+
+
+Die folgenden Zeichen sind zulässig sowohl in den Daten als auch in der
+Wertangabe des Attributs <<a-defaultnum>>:
+
+. Minus (`-`)
+. Ziffern (`0-9`)
+
+.Definition
+[source,xml]
+----
+<num id="numberA" length="4"/>
+<num id="numberB" max-digits="5"/>
+<num id="Pi" length="10" precision="9" defaultnum="3141592653"/>
+----
+
+.Erlaubte Attribute
+****
+<<generic-attributes>>, <<a-db-auto-inc>>, <<a-db-column-name>>, <<a-db-foreign-key>>, <<a-defaultnum>>,
+<<a-length>>, <<a-max-digits>>, <<a-precision>>, <<a-unique>>,
+<<a-xml-attribute-name>>, <<a-xml-attribute-parent>>, <<a-xml-element-name>>
+****
+
+[[e-ref]]
+=== ref ===
+Eine Referenz bezieht sich auf ein im Dokument definiertes Datenelement,
+welches an Stelle der Referenz eingesetzt wird.
+
+. Eine Referenz muß eine Quellen-ID (<<a-sid>>) definieren, welches der
+<<a-id>> des referenzierten Datenelementes entspricht!
+. Das referenzierte Datenelement muss vor der Referenz im DFASDL
+Datenbaum vorkommen.
+. Wenn eine Referenz in einer Sequenz definiert wird, muss sie am Ende
+der Sequenz stehen.
+. In einer Sequenz darf nur eine Referenz vorkommen.
+. Wenn für eine Referenz keine semantische Bedeutung (<<a-s>>) definiert
+ist, wird die Semantik des referenzierten Eintrags übernommen!
+
+.Definition
+[source,xml]
+----
+<elem id="someBlockElement">
+  <elem id="anotherID">
+    <str id="firstname"/>
+    <str id="lastname"/>
+    <num id="mainNumber"/>
+  </elem>
+</elem>
+<ref id="number" sid="mainNumber"/>
+<!-- Referenzieren aus einer Sequenz -->
+<seq id="accountList" max="999">
+  <elem id="account">
+    <num id="account_id"/>
+    <str id="name"/>
+    <str id="account"/>
+    <seq id="children">
+      <elem id="alter">
+        <num id="anzahl"/>
+        <num id="age"/>
+        <ref sid="account_id" id="children_account_id">
+      </elem>
+    </seq>
+  </elem>
+</seq>
+----
+
+.Erlaubte Attribute
+****
+<<generic-attributes>>, <<a-sid>>, <<a-value>>
+****
+
+[[e-seq]]
+=== seq ===
+Ein Sequenzelement definiert sich wiederholende Strukturen.
+
+. Eine Sequenz kann die folgenden Varianten definieren:
+.. eine Mindestanzahl (<<a-min>>)
+.. eine Maximalanzahl (<<a-max>>)
+.. eine Mindest- und Maximalanzahl (<<a-min>> und <<a-max>>)
+.. keine Angabe (entspricht einer *unendlichen* Sequenz)
+. Innerhalb einer Sequenz werden bei der Konvertierung keine IDs mit
+kopiert, sondern in das Attribut <<a-class>> kopiert. Aus der ID `foo`
+wird hierbei die Ausprägung `id:foo` im Klassenattribut.
+. Wenn die IDs gelöscht werden sollen, muß das Attribut <<a-keepID>>
+mit `false` angegeben werden.
+. Daten-Elemente müssen innerhalb einer Sequenz mit einem <<e-elem>>
+Element umfasst werden.
+. Durch das <<a-stop-sign>> kann eine Zeichenkette angegeben werden,
+welche die Sequenz beendet. Wenn dieses <<a-stop-sign>> in den Daten
+auftaucht, wird die Sequenz beendet und die Abarbeitung weiterer
+Elemente, welche nach der Sequenz kommen, fortgesetzt.
+. Das Attribut <<a-filter>> erlaubt die Definition eines Filters auf den
+Quelldaten. Lediglich Daten, die diesen Filter erfüllen werden
+berücksichtigt.
+
+.Definition
+[source,xml]
+----
+<seq id="accountList" min="42" max="999">
+  <elem id="account">
+    <str id="number" class="foo"/>
+    <str id="name"/>
+  </elem>
+</seq>
+ 
+<seq id="accountList2" keepID="false">
+  <elem id="account">
+    <str id="number" class="bar"/>
+  </elem>
+</seq>
+
+<seq id="salaries" filter="salary > 20000">
+  <elem id="employee">
+    <str id="name"/>
+    <num id="salary"/>
+  </elem>
+</seq>
+----
+
+.Erlaubte Attribute
+****
+<<generic-attributes>>, <<a-db-select>>, <<a-db-insert>>,
+<<a-db-primary-key>>, <<a-db-update>>, <<a-min>>, <<a-max>>,
+<<a-keepID>>, <<a-filter>>
+****
+
+.Erlaubte Elemente
+****
+Strukturelemente, Datenelemente
+****
+
+[[e-str]]
+=== str ===
+Ein Datenelement für Zeichenketten. Dieses Element kann, aber sollte
+nicht, als generischer Container genutzt werden, da sich fast alle Daten
+in Form von Zeichenketten darstellen lassen.
+
+. Ein Zeichenelement darf nur Zeichen in der Standard- oder
+eingestellten Kodierung enthalten.
+. Ein Zeichenelement kann die Kodierung der zu erwartenden Zeichenfolge
+(<<a-encoding>>) definieren.
+. Ein Zeichenelement kann eine exakt einzuhaltende Anzahl (<<a-length>>)
+von Zeichen definieren.
+. Ein Zeichenelement kann eine maximal zu berücksichtigende
+Zeichenanzahl (<<a-max-length>>) definieren.
+. Ein Zeichenelement kann ein Folge von Zeichen definieren, die als
+Stopzeichen (<<a-stop-sign>>) gewertet werden.
+. Ein Zeichenelement kann einen Standardwert (<<a-defaultstr>>)
+definieren, der bei fehlenden Datensätzen eingefügt wird.
+
+.Definition
+[source,xml]
+----
+<str id="A" encoding="UTF-16"/>
+<str id="B" length="3"/>
+<str id="C" max-length="5"/>
+<str id="possiblyEmpty" defaultstr="missingValue"/>
+<str id="D" stop-sign="\n"/>
+----
+
+.Erlaubte Attribute
+****
+<<generic-attributes>>, <<a-db-column-name>>, <<a-db-foreign-key>>, <<a-defaultstr>>,
+<<a-length>>, <<a-max-length>>, <<a-trim>>, <<a-unique>>,
+<<a-xml-attribute-name>>, <<a-xml-attribute-parent>>,
+<<a-xml-element-name>>
+****
+
+[[e-sxp]]
+=== sxp ===
+Ein Element, das eine Scala-Expression enthält.
+
+WARNING: Dieses Element wird entfernt!
+
+. Der Ausdruck entspricht einer Scala-Expression
+. Der Ausdruck muß beginnen mit: `<![CDATA[{`
+. Der Ausdruck muß enden mit: `}]]>`
+. Innerhalb des sxp Elementes dürfen alle gängigen XML Elemente eingefügt werden.
+
+.Definition
+[source,xml]
+----
+<sxp id="expOne">
+  <ul><![CDATA[{List(apple, banana, orange).map(i => <li>{i}</li>)}]]></ul>
+</sxp>
+----
+
+.Erlaubte Attribute
+****
+<<generic-attributes>>
+****
+
+[[e-time]]
+=== time ===
+Ein Datenelement für Zeitdaten, die der ISO-Notation entsprechen müssen.
+
+.Definition
+[source,xml]
+----
+<time id="high-noon"/>
+----
+
+.Erlaubte Attribute
+****
+<<generic-attributes>>, <<a-db-column-name>>, <<a-db-foreign-key>>, <<a-unique>>,
+<<a-xml-attribute-name>>, <<a-xml-attribute-parent>>,
+<<a-xml-element-name>>
+****
+
+[[attributes]]
+== Attribute ==
+
+[[root-attributes]]
+=== Wurzelattribute ===
+
+Wurzelattribute sind nur am Wurzelelement <<e-dfasdl>> erlaubt.
+
+[[a-default-encoding]]
+==== default-encoding ====
+
+Eine Vorgabe für die Kodierung der eingelesenen Daten. Es muß sich um eine valide
+Definition z.B. `utf-8` handeln.
+
+TIP: Dieses Attribut ist sinnvoll, wenn alle oder die meisten Elemente die gleiche Kodierung verwenden.
+
+[[a-semantic]]
+==== semantic ====
+
+Der Inhalt des Attributs beschreibt den genutzten semantischen Raum des
+Dokuments. Derzeit sind die folgenden Werte erlaubt: `custom`, `niem`,
+`udef`.
+
+[[generic-attributes]]
+=== Generische Attribute ===
+
+Generische Attribute sind an allen Elementen außer dem Wurzelelement
+verfügbar.
+
+[[a-class]]
+==== class ====
+
+Definiert eine Klassenbezeichnung für ein Element.
+
+[[a-correct-offset]]
+==== correct-offset ====
+
+Durch dieses Attribut kann der Offset der eingelesenen Daten korrigiert
+werden.
+
+TIP: Der Offset kann in die positive und auch in die negative Richtung
+korrigiert werden.
+
+[[a-encoding]]
+==== encoding ====
+
+Die verwendete Kodierung der eingelesenen Daten. Es muß sich um eine valide
+Definition z.B. `utf-8` handeln.
+
+[[a-id]]
+==== id ====
+
+. Eine ID ist eine Zeichenkette.
+. Eine ID muß mit einem Buchstaben beginnen.
+. Eine ID darf Buchstaben aus dem ASCII-Alphabet, Zahlen und
+Unterstriche sowie Minuszeichen enthalten.
+. Eine ID darf innerhalb eines Dokuments nur einmal vorkommen.
+. Wenn nicht anders angegeben, ist die Angabe der ID für *alle*
+Elementtypen *zwingend erforderlich*!
+
+CAUTION: Sollte keine ID angegeben sein, wird später automatische eine
+erzeugt. Es ist aber ratsam selber eine eigene ID zu vergeben, um das
+Mapping besser manuell nachkorrigieren zu können.
+
+[[a-s]]
+==== s ====
+
+Beschreibt die semantische Bedeutung des Elements.
+
+. Die semantische Bedeutung wird als Zeichenkette angegeben.
+. Es sind nur Werte zulässig, die dem gewählten semantischen Standard
+entsprechen.
+
+[[a-start-sign]]
+==== start-sign ====
+
+Ein regulärer Ausdruck, der den Begin der Elementdaten beschreibt.
+
+IMPORTANT: Ein `start-sign` darf nicht leer sein!
+
+[[a-stop-sign]]
+==== stop-sign ====
+
+Ein regulärer Ausdruck, der das Ende der Elementdaten beschreibt.
+
+NOTE: Das Standard `stop-sign` berücksichtigt UNIX und Windows Zeilenenden und
+ist folgendermaßen definiert: `\r\n?|\n`
+
+IMPORTANT: Ein `stop-sign` darf nicht leer sein!
+
+[[specific-attributes]]
+=== Elementspezifische Attribute ===
+
+Es gibt Attribute, die nur an bestimmten Elementen erlaubt sind.
+
+[[a-byteOrder]]
+==== byteOrder ====
+Gibt die Sortierung der Bytes für Binärdaten an. Die folgenden Angaben
+sind möglich:
+
+. bigEndian
+. littleEndian
+. middleEndian
+
+.Erlaubt an folgenden Elementen
+****
+<<e-bin>>
+****
+
+[[a-count]]
+==== count ====
+Definiert eine Anzahl. Erlaubt ist ein numerischer Wert größer oder gleich
+Null.
+
+.Erlaubt an folgenden Elementen
+****
+<<e-fixseq>>
+****
+
+[[a-db-auto-inc]]
+==== db-auto-inc ====
+Die Spalte des Elements in der Datenbank ist eine Autoinkrementspalte,
+d.h. deren Wert wird automatisch befüllt, wenn kein Wert für die Spalte
+angegeben wird.
+
+.Erlaubt an folgenden Elementen
+****
+<<e-formatnum>>, <<e-num>>
+****
+
+WARNING: Da Datenbanken hinsichtlich der Verwendung von
+Autoinkrementspalten limitiert sind, sollte dieses Attribut nur an
+einem einfachen <<e-num>> Element ohne die Attribute <<a-precision>>
+und <<a-length>> verwendet werden!
+
+.Beispiel
+[source,xml]
+----
+<seq id="companies">
+  <elem id="companies-row">
+    <num id="companies-row-id" db-column-name="id" db-auto-inc="true"/>
+  </elem>
+</seq>
+----
+
+[[a-db-column-name]]
+==== db-column-name ====
+Der Spaltenname des Elementes in der Datenbank. Wenn dieser nicht
+angegeben ist, wird die ID des Elementes für den Spaltennamen
+herangezogen.
+
+.Erlaubt an folgenden Elementen
+****
+Dieses Attribut ist an allen Datenelementen gestattet.
+****
+
+[[a-db-foreign-key]]
+==== db-foreign-key ====
+Die Fremdschlüsseldefinition in der Datenbank für die Spalte, die durch
+das aktuelle Element beschrieben wird. Die Angabe erfolgt durch eine
+Zeichenkette, die kommasepariert die IDs aller DFASDL-Elemente enthält,
+die die jeweiligen Spalten beschreiben.
+
+.Erlaubt an folgenden Elementen
+****
+<<e-date>>, <<e-datetime>>, <<e-formatnum>>, <<e-formatstr>>,
+<<e-formattime>>, <<e-num>>, <<e-str>>, <<e-time>>
+****
+
+.Beispiel
+[source,xml]
+----
+<seq id="companies">
+  <elem id="companies-row">
+    <num id="companies-row-id" db-column-name="id"/> <!--1-->
+    ...
+  </elem>
+</seq>
+
+<seq id="contacts">
+  <elem id="contacts-row">
+    ...
+    <num id="contacts-row-company-id" db-column-name="company_id" db-foreign-key="companies-row-id"/> <!--2-->
+  </elem>
+</seq>
+----
+<<1>> Die Beschreibung einer Datenbankspalte.
+<<2>> Der Verweis via `db-foreign-key` auf das referenzierte Element.
+
+[[a-db-insert]]
+==== db-insert ====
+Möglichkeit zur Durchführung datenbankspezifischer INSERT-Statements, um
+Datensätze in eine Tabelle einzufügen. Die Syntax muß der für prepared
+Statements entsprechen.
+
+.Beispiel
+[source,sql]
+----
+INSERT INTO mytable (column1, column2) VALUES(?, ?)
+----
+
+NOTE: Es ist möglich datenbankspezifische SQL-Syntax zu verwenden.
+
+.Erlaubt an folgenden Elementen
+****
+<<e-fixseq>>, <<e-seq>>
+****
+
+[[a-db-primary-key]]
+==== db-primary-key ====
+Definiert den Primärschlüssel für eine Datenbanktabelle. Insofern das
+Attribut definiert ist, muß es mindestens einen oder mehrere durch
+Kommas getrennte Spaltennamen enthalten.
+
+NOTE: Die Spaltennamen müssen den Datenbankspaltennamen entsprechen!
+
+.Erlaubt an folgenden Elementen
+****
+<<e-fixseq>>, <<e-seq>>
+****
+
+[[a-db-select]]
+==== db-select ====
+Möglichkeit zur Durchführung datenbankspezifischer SELECT-Statements, um
+Datensätze aus einer Tabelle zu ermitteln.
+
+.Beispiel
+[source,sql]
+----
+SELECT
+  x374 AS column1,
+  y478 AS column2
+FROM x2 JOIN y3 ON x2.id = y3.refId
+WHERE x2.x23 = 1
+ORDER BY y3.y1 ASC
+----
+
+.Beispiel DFASDL
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<dfasdl xmlns="http://www.dfasdl.org/DFASDL" semantic="custom">
+  <seq id="people" db-select="SELECT t1.name, firstname, title, telephone, t2.name AS productname FROM `people` AS t1, `products` AS t2 WHERE t1.pid = t2.pid">
+    <elem id="people_row">
+      <str db-column-name="name" id="people_row_name" max-length="12"/>
+      <str db-column-name="firstname" id="people_row_firstname" max-length="9"/>
+      <str db-column-name="title" id="people_row_title" max-length="22"/>
+      <str db-column-name="telephone" id="people_row_telephone" max-length="14"/>
+      <str db-column-name="productname" id="productname"/>
+    </elem>
+  </seq>
+</dfasdl>
+----
+
+.Erlaubt an folgenden Elementen
+****
+<<e-fixseq>>, <<e-seq>>
+****
+
+[[a-db-update]]
+==== db-update ====
+Möglichkeit zur Durchführung datenbankspezifischer UPDATE-Statements, um
+Datensätze in einer Tabelle zu aktualisieren. Die Syntax muß der für prepared
+Statements entsprechen.
+
+.Beispiel
+[source,sql]
+----
+UPDATE mytable SET id = ?, column1 = ?, column2 = ? WHERE id = ?
+----
+
+.Beispiel DFASDL
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<dfasdl xmlns="http://www.dfasdl.org/DFASDL" semantic="custom">
+  <seq id="people" db-primary-key="id" db-update="UPDATE people SET id = ?, name = ?, time = now() WHERE id = ?">
+    <elem id="people_row">
+      <num db-column-name="id" id="id" max-digits="5"/>
+      <str db-column-name="name" id="name" max-length="12"/>
+    </elem>
+  </seq>
+</dfasdl>
+----
+
+NOTE: Es ist möglich datenbankspezifische SQL-Syntax zu verwenden.
+
+.Erlaubt an folgenden Elementen
+****
+<<e-fixseq>>, <<e-seq>>
+****
+
+[[a-decimal-separator]]
+==== decimal-separator ====
+Gibt das Dezimaltrennzeichen für ein numerisches Datenelement an.
+Erlaubt sind die folgenden Werte:
+
+. Punkt (`.`)
+. Komma (`,`)
+. Momayyez (`٫`)
+
+.Erlaubt an folgenden Elementen
+****
+<<e-formatnum>>
+****
+
+[[a-defaultnum]]
+==== defaultnum ====
+Definiert einen Standardwert für ein numerisches Datenelement, für den
+Fall, daß die Daten leer sind. Das erlaubte Format ist abhängig vom
+konkreten numerischen Datenelement.
+
+.Erlaubt an folgenden Elementen
+****
+<<e-formatnum>>, <<e-num>>
+****
+
+[[a-defaultstr]]
+==== defaultstr ====
+Definiert eine Zeichenkette als Standardwert für ein Datenelement, für
+den Fall, daß die Daten leer sind.
+
+.Erlaubt an folgenden Elementen
+****
+<<e-formatstr>>, <<e-formattime>>, <<e-str>>
+****
+
+[[a-filter]]
+==== filter ====
+Definiert einen Filterausdruck, der die zur Verfügung stehenden Daten
+eingrenzt.
+
+CAUTION: Filter werden momentan nur auf Datenbanken unterstützt!
+
+WARNING: Sonderzeichen, die innerhalb von XML Probleme bereiten können
+wie z.B. `<` und `&` müssen korrekt maskiert werden!
+
+.Maskierte Sonderzeichen im Ausdruck
+[source,xml]
+----
+<seq id="foo" filter="my-column-data &lt; 1024">
+  ...
+</seq>
+----
+
+.Erlaubt an folgenden Elementen
+****
+<<e-seq>>
+****
+
+[[a-format]]
+==== format ====
+Enthält eine Formatangabe für den Inhalt eines Datenelements.
+
+CAUTION: Der zu matchende Teil muss innerhalb einer Gruppe `()` stehen!
+
+.Erlaubt an folgenden Elementen
+****
+<<e-formatnum>>, <<e-formattime>>, <<e-formatstr>>
+****
+
+[[a-length]]
+==== length ====
+Definiert die exakte Länge einer Zeichenkette.
+
+.Erlaubt an folgenden Elementen
+****
+<<e-num>>, <<e-str>>
+****
+
+[[a-keepID]]
+==== keepID ====
+Gibt an, ob die Werte des Attributs <<a-id>> innerhalb von Sequenzen
+erhalten werden sollen. Sie werden dann im Attribut <<a-class>>
+gespeichert. Erlaubt sind die Angaben `true` und `false`.
+
+NOTE: Per Standard ist dieses Attribut aktiviert, d.h. auf `true`
+gesetzt.
+
+.Erlaubt an folgenden Elementen
+****
+<<e-fixseq>>, <<e-seq>>
+****
+
+[[a-max]]
+==== max ====
+Definiert einen maximalen numerischen Wert als Ganzzahl.
+
+.Erlaubt an folgenden Elementen
+****
+<<e-seq>>
+****
+
+[[a-max-digits]]
+==== max-digits ====
+Definiert eine maximale Anzahl von Ziffern als numerische Ganzzahl.
+
+.Erlaubt an folgenden Elementen
+****
+<<e-num>>, <<e-formatnum>>
+****
+
+[[a-max-length]]
+==== max-length ====
+Definiert die maximale Länger einer Zeichenkette als numerische
+Ganzzahl.
+
+.Erlaubt an folgenden Elementen
+****
+<<e-str>>
+****
+
+[[a-max-precision]]
+==== max-precision ====
+Definiert die Anzahl an Nachkommastellen als numerische Ganzzahl.
+
+.Erlaubt an folgenden Elementen
+****
+<<e-formatnum>>
+****
+
+[[a-mime]]
+==== mime ====
+Definiert den MIME-Type von Binärdaten z.B. `application/postscript`.
+
+.Erlaubt an folgenden Elementen
+****
+<<e-bin>>
+****
+
+[[a-min]]
+==== min ====
+Definiert einen minimalen numerischen Wert als Ganzzahl.
+
+.Erlaubt an folgenden Elementen
+****
+<<e-seq>>
+****
+
+[[a-precision]]
+==== precision ====
+Definiert die Präzision, d.h. die Anzahl der Nachkommastellen einer Zahl
+als numerische Ganzzahl.
+
+.Erlaubt an folgenden Elementen
+****
+<<e-num>>
+****
+
+[[a-sep]]
+==== sep ====
+Definiert die Trennzeichen für Werte eines Datensatzes.
+
+WARNING: Dieses Attribut wird nicht benutzt!
+
+[[a-sid]]
+==== sid ====
+Definiert eine Quell-ID für den Verweis auf ein anderes Element.
+
+.Erlaubt an folgenden Elementen
+****
+<<e-ref>>
+****
+
+[[a-trim]]
+==== trim ====
+Gibt an, ob für eingelesene Zeichenkette eine _Säuberung_ durchgeführt
+werden soll. Hierbei werden Leerzeichen, Tabulatoren und Zeilenumbrüche
+entfernt. Die folgenden Angaben sind möglich:
+
+[horizontal]
+left:: Nur am Anfang der Zeichenkette säubern.
+right:: Nur am Ende der Zeichenkette säubern.
+both:: Am Anfang und am Ende der Zeichenkette säubern.
+
+.Erlaubt an folgenden Elementen
+****
+<<e-formatstr>>, <<e-str>>
+****
+
+[[a-unique]]
+==== unique ====
+Definiert eine eindeutige Merkmalsausprägung für das Element im Datensatz.
+Wenn das Attribut vorhanden und auf `true` gesetzt ist, dann darf eine
+konkrete Merkmalsausprägung innerhalb eines Datensatzes nur einmal
+vorkommen. Dies ist analog zu einem `UNIQUE CONSTRAINT` in einer
+relationalen Datenbank.
+
+.Erlaubt an folgenden Elementen
+****
+<<e-formatnum>>,<<e-formatstr>>,<<e-formattime>>,<<e-num>>,<<e-str>>,<<e-time>>
+****
+
+[[a-value]]
+==== value ====
+Definiert eine Merkmalsausprägung eines Datensatzes.
+
+.Erlaubt an folgenden Elementen
+****
+<<e-ref>>
+****
+
+[[a-xml-attribute-name]]
+==== xml-attribute-name ====
+Definiert den Namen des Attributs, welches am XML-Element (definiert
+über <<a-xml-attribute-parent>>) vorhanden ist. Dies dient dazu, Daten
+auslesen zu können, die in XML-Attributen stehen.
+
+.Definition
+[source,xml]
+----
+<seq id="foo">
+  <elem id="row">
+    <num id="age" xml-attribute-name="age" xml-attribute-parent="raw-data"/>
+    <num id="count" xml-attribute-name="count" xml-attribute-parent="raw-data"/>
+  </elem>
+</seq>
+----
+
+[[a-xml-attribute-parent]]
+==== xml-attribute-parent ====
+Definiert den Namen eines XML-Elements, das Attribute beinhaltet, die
+ausgelesen werden sollen (siehe <<a-xml-attribute-name>>).
+
+.Definition
+[source,xml]
+----
+<seq id="foo">
+  <elem id="row">
+    <num id="age" xml-attribute-name="age" xml-attribute-parent="raw-data"/>
+    <num id="count" xml-attribute-name="count" xml-attribute-parent="raw-data"/>
+  </elem>
+</seq>
+----
+
+[[a-xml-element-name]]
+==== xml-element-name ====
+Falls der Name des auszulesenden XML-Elements von der <<a-id>> abweicht,
+kann er hiermit definiert werden (analog zu <<a-db-column-name>>).
+
+.Definition
+[source,xml]
+----
+<str id="some-id" xml-element-name="an-xml-id"/>
+----
+

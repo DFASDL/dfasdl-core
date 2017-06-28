@@ -1,0 +1,1795 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+ DFASDL - Data Format and Semantics Description Language
+
+ File:      dfasdl.xsd
+ Version:   ${version}
+ License:   The DFASDL is distributed under the terms of the Creative Commons 
+            Attribution 4.0 International license (CC BY 4.0).
+
+ Information
+ –––––––––––
+ This XML Schema defines the Syntax for the DFASDL.
+
+ >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-->
+<xs:schema xmlns="http://www.dfasdl.org/DFASDL"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://www.dfasdl.org/DFASDL"
+           elementFormDefault="qualified"
+           attributeFormDefault="unqualified"
+           version="${version}">
+
+  <xs:annotation>
+    <xs:documentation xml:lang="en">
+      Default DFASDL elements.
+    </xs:documentation>
+  </xs:annotation>
+
+  <!--
+  –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+  Include the attributes and elementary definitions.
+  –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+  -->
+  <!--<xs:include schemaLocation="dfasdl-attributes.xsd"/>-->
+
+  <!--
+  –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+  Structure
+  –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+  -->
+  <xs:complexType name="dfasdl-element" abstract="true">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        This element is the abstract definition of all complex
+        elements that are created in the following.
+        <br/>
+        Elements that have SimpleContent will not be extended from
+        this element.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:complexType>
+
+  <!--
+  Root element
+  -->
+  <xs:element name="dfasdl" type="dfasdl-element-root">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Tag: dfasdl
+        <br/>
+        Name: dfasdl
+        <br/>
+        <p>
+          The
+          <b>dfasdl</b>
+          element is the root element of the
+          <abbr>DFASDL</abbr>
+          structure. It is the outermost element
+          of the XML tree and surrounds all possible
+          <abbr>DFASDL</abbr>
+          elements.
+        </p>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:complexType name="dfasdl-element-root">
+    <xs:complexContent>
+      <xs:extension base="dfasdl-element">
+        <xs:group ref="elements"/>
+        <xs:attributeGroup ref="dfasdl-attributes-root"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!--
+  Basic element
+  -->
+  <xs:element name="elem" type="dfasdl-element-element">
+    <xs:annotation>
+      <xs:documentation>
+        Tag: elem
+        <br/>
+        Name: element
+        <br/>
+        <p>
+          The
+          <b>elem</b>
+          element is a smallest entity in the
+          <abbr>DFASDL</abbr>
+          structure. It is recursively defined
+          and can contain
+          <b>elem</b>
+          and other elements.
+        </p>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:complexType name="dfasdl-element-element">
+    <xs:complexContent>
+      <xs:extension base="dfasdl-element">
+        <xs:group ref="elements"/>
+        <xs:attributeGroup ref="dfasdl-attributes-base"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="celem" type="dfasdl-element-celement">
+    <xs:annotation>
+      <xs:documentation>
+        Tag: celem
+        <br/>
+        Name: Choice element
+        <br/>
+        <p>
+          The
+          <b>celem</b>
+          element is a smallest entity in the
+          <abbr>DFASDL</abbr>
+          structure. It is recursively defined
+          and can contain
+          <b>elem</b>
+          and other elements that are
+          allowed in a choice.
+        </p>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:complexType name="dfasdl-element-celement">
+    <xs:complexContent>
+      <xs:extension base="dfasdl-element">
+        <xs:group ref="choice-elements"/>
+        <xs:attributeGroup ref="dfasdl-attributes-base"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!--
+  Structural elements
+  -->
+  <!-- sequence -->
+  <xs:element name="seq" type="dfasdl-element-sequence">
+    <xs:annotation>
+      <xs:documentation>
+        Tag: seq
+        <br/>
+        Name: sequence
+        <br/>
+        <p>
+          The
+          <b>seq</b>
+          element defines a repeatable structure.
+        </p>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:complexType name="dfasdl-element-sequence">
+    <xs:complexContent>
+      <xs:extension base="dfasdl-element">
+        <xs:sequence maxOccurs="unbounded">
+          <xs:group ref="structural-elements"/>
+        </xs:sequence>
+        <xs:attributeGroup ref="dfasdl-attributes-sequence"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="choice" type="dfasdl-element-choice">
+    <xs:annotation>
+      <xs:documentation>
+        Tag: choice
+        <br/>
+        Name: choice
+        <br/>
+        <p>
+          The
+          <b>choice</b>
+          element defines possible elements that can/must
+          occur in the specified structure.
+        </p>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:complexType name="dfasdl-element-choice">
+    <xs:complexContent>
+      <xs:extension base="dfasdl-element">
+        <xs:sequence maxOccurs="unbounded">
+          <xs:group ref="choice-elements"/>
+        </xs:sequence>
+        <xs:attributeGroup ref="dfasdl-attributes-choice"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- fixseq -->
+  <xs:element name="fixseq" type="dfasdl-element-fixed-sequence">
+    <xs:annotation>
+      <xs:documentation>
+        Tag: fixseq
+        <br/>
+        Name: fixed sequence
+        <br/>
+        <p>
+          The
+          <b>fixseq</b>
+          element defines a repeatable structure
+          which specifies a determined number of repeated inner elements.
+        </p>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:complexType name="dfasdl-element-fixed-sequence">
+    <xs:complexContent>
+      <xs:extension base="dfasdl-element">
+        <xs:sequence maxOccurs="unbounded">
+          <xs:group ref="structural-elements"/>
+        </xs:sequence>
+        <xs:attributeGroup ref="dfasdl-attributes-fixed-sequence"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- customid -->
+  <xs:element name="cid" type="dfasdl-element-cid">
+    <xs:annotation>
+      <xs:documentation>
+        Tag: cid
+        <br/>
+        Name: custom ID
+        <br/>
+        <p>
+          The
+          <b>cid</b>
+          element is a user defined ID that is used as
+          box element for one<b>num</b>,<b>formatnum</b>,
+          <b>str</b>
+          or
+          <b>formatstr</b>
+          element.
+        </p>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:complexType name="dfasdl-element-cid">
+    <xs:complexContent>
+      <xs:extension base="dfasdl-element">
+        <xs:sequence maxOccurs="1" minOccurs="0">
+          <xs:group ref="data-elements"/>
+        </xs:sequence>
+        <xs:attributeGroup ref="dfasdl-attributes-cid"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- reference -->
+  <xs:element name="ref" type="dfasdl-element-reference">
+    <xs:annotation>
+      <xs:documentation>
+        Tag: ref
+        <br/>
+        Name: reference
+        <br/>
+        <p>
+          The
+          <b>ref</b>
+          element points to a part of the document
+          that is replaced at the position of the reference.
+        </p>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:complexType name="dfasdl-element-reference">
+    <xs:complexContent>
+      <xs:extension base="dfasdl-element">
+        <xs:attributeGroup ref="dfasdl-attributes-reference"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!--
+  Data elements
+  -->
+  <!-- numeric -->
+  <xs:element name="num" type="dfasdl-element-numeric">
+    <xs:annotation>
+      <xs:documentation>
+        Tag: num
+        <br/>
+        Name: numeric
+        <br/>
+        <p>
+          The
+          <b>num</b>
+          element defines a numeric data element.
+        </p>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:complexType name="dfasdl-element-numeric">
+    <xs:simpleContent>
+      <xs:extension base="dfasdl-empty-or-numeric">
+        <xs:attributeGroup ref="dfasdl-attributes-numeric"/>
+        <xs:attributeGroup ref="dfasdl-attributes-xml-attributes"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <!-- formatted numeric -->
+  <xs:element name="formatnum" type="dfasdl-element-formatted-numeric">
+    <xs:annotation>
+      <xs:documentation>
+        Tag: formatnum
+        <br/>
+        Name: formatted numeric
+        <br/>
+        <p>
+          The
+          <b>formatnum</b>
+          element defines a numeric data element
+          with a defined format.
+        </p>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:complexType name="dfasdl-element-formatted-numeric">
+    <xs:simpleContent>
+      <xs:extension base="dfasdl-empty-or-formatted-numeric">
+        <xs:attributeGroup ref="dfasdl-attributes-formatted-numeric"/>
+        <xs:attributeGroup ref="dfasdl-attributes-xml-attributes"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <!-- string -->
+  <xs:element name="str" type="dfasdl-element-string">
+    <xs:annotation>
+      <xs:documentation>
+        Tag: str
+        <br/>
+        Name: string
+        <br/>
+        <p>
+          The
+          <b>str</b>
+          element defines a character string.
+        </p>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:complexType name="dfasdl-element-string">
+    <xs:simpleContent>
+      <xs:extension base="dfasdl-empty-or-string">
+        <xs:attributeGroup ref="dfasdl-attributes-string"/>
+        <xs:attributeGroup ref="dfasdl-attributes-xml-attributes"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <!-- formatted string -->
+  <xs:element name="formatstr" type="dfasdl-element-formatted-string">
+    <xs:annotation>
+      <xs:documentation>
+        Tag: formatstr
+        <br/>
+        Name: formatted string
+        <br/>
+        <p>
+          The
+          <b>formatstr</b>
+          element defines a character string
+          with a defined format.
+        </p>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:complexType name="dfasdl-element-formatted-string">
+    <xs:simpleContent>
+      <xs:extension base="dfasdl-empty-or-string">
+        <xs:attributeGroup ref="dfasdl-attributes-formatted-string"/>
+        <xs:attributeGroup ref="dfasdl-attributes-xml-attributes"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <!-- binary -->
+  <xs:element name="bin" type="dfasdl-element-binary">
+    <xs:annotation>
+      <xs:documentation>
+        Tag: bin
+        <br/>
+        Name: Binary
+        <br/>
+        <p>
+          The
+          <b>bin</b>
+          element defines a binary.
+        </p>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:complexType name="dfasdl-element-binary">
+    <xs:simpleContent>
+      <xs:extension base="dfasdl-binary">
+        <xs:attributeGroup ref="dfasdl-attributes-binary"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:element name="bin64" type="dfasdl-element-binary64">
+    <xs:annotation>
+      <xs:documentation>
+        Tag: bin64
+        <br/>
+        Name: Binary Base 64
+        <br/>
+        <p>
+          The
+          <b>bin64</b>
+          element defines Base64-encoded binary data.
+        </p>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:complexType name="dfasdl-element-binary64">
+    <xs:simpleContent>
+      <xs:extension base="dfasdl-binary64">
+        <xs:attributeGroup ref="dfasdl-attributes-binary64"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:element name="binHex" type="dfasdl-element-binaryHex">
+    <xs:annotation>
+      <xs:documentation>
+        Tag: binHex
+        <br/>
+        Name: Binary Hex
+        <br/>
+        <p>
+          The
+          <b>binHex</b>
+          element defines hexadecimal-encoded binary data.
+        </p>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:complexType name="dfasdl-element-binaryHex">
+    <xs:simpleContent>
+      <xs:extension base="dfasdl-binaryHex">
+        <xs:attributeGroup ref="dfasdl-attributes-binaryHex"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <!--
+  Time elements
+  -->
+  <!-- date -->
+  <xs:element name="date" type="dfasdl-element-date">
+    <xs:annotation>
+      <xs:documentation>
+        Tag: date
+        <br/>
+        Name: Date
+        <br/>
+        <p>
+          The
+          <b>date</b>
+          element defines a date field.
+        </p>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:complexType name="dfasdl-element-date">
+    <xs:simpleContent>
+      <xs:extension base="dfasdl-date">
+        <xs:attributeGroup ref="dfasdl-attributes-date"/>
+        <xs:attributeGroup ref="dfasdl-attributes-xml-attributes"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <!-- datetime -->
+  <xs:element name="datetime" type="dfasdl-element-datetime">
+    <xs:annotation>
+      <xs:documentation>
+        Tag: datetime
+        <br/>
+        Name: Datetime
+        <br/>
+        <p>
+          The
+          <b>datetime</b>
+          element defines a datetime field.
+        </p>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:complexType name="dfasdl-element-datetime">
+    <xs:simpleContent>
+      <xs:extension base="dfasdl-datetime">
+        <xs:attributeGroup ref="dfasdl-attributes-date"/>
+        <xs:attributeGroup ref="dfasdl-attributes-xml-attributes"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <!-- time -->
+  <xs:element name="time" type="dfasdl-element-time">
+    <xs:annotation>
+      <xs:documentation>
+        Tag: time
+        <br/>
+        Name: Time
+        <br/>
+        <p>
+          The
+          <b>time</b>
+          element defines a time field.
+        </p>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:complexType name="dfasdl-element-time">
+    <xs:simpleContent>
+      <xs:extension base="dfasdl-time">
+        <xs:attributeGroup ref="dfasdl-attributes-date"/>
+        <xs:attributeGroup ref="dfasdl-attributes-xml-attributes"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <!-- time -->
+  <xs:element name="formattime" type="dfasdl-element-formatted-time">
+    <xs:annotation>
+      <xs:documentation>
+        Tag: formattime
+        <br/>
+        Name: Formatted Time
+        <br/>
+        <p>
+          The
+          <b>formattime</b>
+          element defines a time field
+          that can define a formatted date, datetime or time entry.
+        </p>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:complexType name="dfasdl-element-formatted-time">
+    <xs:simpleContent>
+      <xs:extension base="dfasdl-empty-or-string">
+        <xs:attributeGroup ref="dfasdl-attributes-formatted-time"/>
+        <xs:attributeGroup ref="dfasdl-attributes-xml-attributes"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <!--
+  Expression elements
+  -->
+  <!-- constant -->
+  <xs:element name="const" type="dfasdl-element-const">
+    <xs:annotation>
+      <xs:documentation>
+        Tag: const
+        <br/>
+        Name: constant
+        <br/>
+        <p>
+          The
+          <b>const</b>
+          element is a box element for one<b>num</b>,
+          <b>formatnum</b>,
+          <b>str</b>
+          or
+          <b>formatstr</b>
+          element.
+        </p>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:complexType name="dfasdl-element-const">
+    <xs:complexContent>
+      <xs:extension base="dfasdl-element">
+        <xs:sequence minOccurs="1" maxOccurs="1">
+          <xs:group ref="data-elements"/>
+        </xs:sequence>
+        <xs:attributeGroup ref="dfasdl-attributes-const"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- expression -->
+  <xs:element name="sxp" type="dfasdl-element-scala-expression">
+    <xs:annotation>
+      <xs:documentation>
+        Tag: sxp
+        <br/>
+        Name: Scala expression
+        <br/>
+        <p>
+          The
+          <b>sxp</b>
+          element defines a Scala expression.
+        </p>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:complexType name="dfasdl-element-scala-expression" mixed="true">
+    <xs:simpleContent>
+      <xs:extension base="dfasdl-scala-expression">
+        <xs:attributeGroup ref="dfasdl-attributes-scala-expression"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <!--
+  –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+  Element groupings
+  –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+  -->
+  <xs:group name="data-elements">
+    <xs:choice>
+      <xs:element ref="bin"/>
+      <xs:element ref="bin64"/>
+      <xs:element ref="binHex"/>
+      <xs:element ref="formatnum"/>
+      <xs:element ref="formatstr"/>
+      <xs:element ref="num"/>
+      <xs:element ref="str"/>
+    </xs:choice>
+  </xs:group>
+
+  <xs:group name="time-elements">
+    <xs:choice>
+      <xs:element ref="date"/>
+      <xs:element ref="datetime"/>
+      <xs:element ref="formattime"/>
+      <xs:element ref="time"/>
+    </xs:choice>
+  </xs:group>
+
+  <xs:group name="structural-elements">
+    <xs:choice>
+      <xs:element ref="choice"/>
+      <xs:element ref="cid"/>
+      <xs:element ref="elem"/>
+      <xs:element ref="fixseq"/>
+      <xs:element ref="ref"/>
+      <xs:element ref="seq"/>
+    </xs:choice>
+  </xs:group>
+
+  <xs:group name="choice-structural-elements">
+    <xs:choice>
+      <xs:element ref="cid"/>
+      <xs:element ref="celem"/>
+    </xs:choice>
+  </xs:group>
+
+  <xs:group name="choice-elements">
+    <xs:sequence>
+      <xs:choice maxOccurs="unbounded">
+        <xs:group ref="choice-structural-elements"/>
+        <xs:group ref="data-elements"/>
+        <xs:group ref="time-elements"/>
+      </xs:choice>
+    </xs:sequence>
+  </xs:group>
+
+  <xs:group name="expression-elements">
+    <xs:choice>
+      <xs:element ref="const"/>
+      <xs:element ref="sxp"/>
+    </xs:choice>
+  </xs:group>
+
+  <xs:group name="elements">
+    <xs:sequence>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:group ref="structural-elements"/>
+        <xs:group ref="data-elements"/>
+        <xs:group ref="time-elements"/>
+        <xs:group ref="expression-elements"/>
+      </xs:choice>
+    </xs:sequence>
+  </xs:group>
+
+  <!-- ###################### -->
+  <!-- PART OF THE ATTRIBUTES -->
+  <!-- ###################### -->
+
+  <!--
+  –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+  Single attributes
+  –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+  -->
+  <xs:attributeGroup name="dfasdl-id">
+    <xs:attribute name="id" type="xs:ID"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="dfasdl-id-required">
+    <xs:attribute name="id" type="xs:ID" use="required"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="dfasdl-format">
+    <xs:attribute name="format" type="dfasdl-format"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="dfasdl-format-required">
+    <xs:attribute name="format" type="dfasdl-format" use="required"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="dfasdl-byteOrder">
+    <xs:attribute name="byteOrder" type="dfasdl-byteOrderEnum"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="dfasdl-class">
+    <xs:attribute name="class" type="dfasdl-string-non-empty"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="dfasdl-count">
+    <xs:attribute name="count" type="xs:nonNegativeInteger"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="dfasdl-count-required">
+    <xs:attribute name="count" type="xs:nonNegativeInteger" use="required"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="dfasdl-db-auto-increment">
+    <xs:annotation>
+      <xs:documentation>
+        This attribute indicates that the current element is an auto-increment
+        column in the database.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="db-auto-inc" type="dfasdl-bool"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="dfasdl-db-column-name">
+    <xs:attribute name="db-column-name" type="dfasdl-string-non-empty"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="dfasdl-db-foreign-key">
+    <xs:annotation>
+      <xs:documentation>
+        The foreign key attribute may contain a non-empty list of comma
+        separated element ids which represent the foreign key for the
+        current element.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="db-foreign-key" type="dfasdl-string-non-empty"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="dfasdl-db-insert">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        The insert attribute may contain a sql query string that will be used
+        to insert data into a database table. The format of the string has to
+        follow the conventions for prepared statements.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="db-insert" type="dfasdl-string-non-empty"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="dfasdl-db-primary-key">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        The primary key attribute may contain a column name or a comma separated
+        list of column names.
+        Please note that the column names must be the actual database column names!
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="db-primary-key" type="dfasdl-string-non-empty"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="dfasdl-db-select">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        The select attribute may contain a sql query string that will be used
+        to fetch data from the database. It provides a practical approach to
+        combine data using complex sql logic.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="db-select" type="dfasdl-string-non-empty"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="dfasdl-db-update">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        The update attribute may contain a sql query string that will be used
+        to update existing data within a database table. The format of the
+        string has to follow the conventions for prepared statements.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="db-update" type="dfasdl-string-non-empty"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="dfasdl-default-encoding">
+    <xs:attribute name="default-encoding" type="dfasdl-encoding" default="utf-8"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="dfasdl-encoding">
+    <xs:attribute name="encoding" type="dfasdl-encoding"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="dfasdl-defaultnum">
+    <xs:attribute name="defaultnum" type="dfasdl-numeric"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="dfasdl-defaultstr">
+    <xs:attribute name="defaultstr" type="dfasdl-string-non-empty"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="dfasdl-filter">
+    <xs:attribute name="filter" type="dfasdl-string-non-empty"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="dfasdl-json-attribute-name">
+    <xs:attribute name="json-attribute-name" type="dfasdl-string-non-empty"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="dfasdl-keepID">
+    <xs:attribute name="keepID" type="xs:boolean" default="true"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="dfasdl-length">
+    <xs:attribute name="length" type="xs:nonNegativeInteger"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="dfasdl-max">
+    <xs:attribute name="max" type="xs:nonNegativeInteger"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="dfasdl-max-digits">
+    <xs:attribute name="max-digits" type="xs:nonNegativeInteger"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="dfasdl-max-length">
+    <xs:attribute name="max-length" type="xs:nonNegativeInteger"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="dfasdl-max-precision">
+    <xs:attribute name="max-precision" type="xs:nonNegativeInteger" default="0"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="dfasdl-mime">
+    <xs:attribute name="mime" type="dfasdl-mime"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="dfasdl-min">
+    <xs:attribute name="min" type="xs:nonNegativeInteger"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="dfasdl-precision">
+    <xs:attribute name="precision" type="xs:nonNegativeInteger" default="0"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="dfasdl-s">
+    <xs:attribute name="s" type="dfasdl-semantic-name"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="dfasdl-sep">
+    <xs:attribute name="sep" type="dfasdl-separator"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="dfasdl-sid">
+    <xs:attribute name="sid" type="xs:IDREF"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="dfasdl-sid-required">
+    <xs:attribute name="sid" type="xs:IDREF" use="required"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="dfasdl-start-sign">
+    <xs:attribute name="start-sign" type="dfasdl-startsign"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="dfasdl-stop-sign">
+    <xs:attribute name="stop-sign" type="dfasdl-stopsign"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="dfasdl-correct-offset">
+    <xs:attribute name="correct-offset" type="dfasdl-numeric"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="dfasdl-storage-path">
+    <xs:attribute name="storage-path" type="xs:anyURI" />
+  </xs:attributeGroup>
+  <xs:attributeGroup name="dfasdl-trim">
+    <xs:attribute name="trim" type="dfasdl-trim" />
+  </xs:attributeGroup>
+  <xs:attributeGroup name="dfasdl-unique">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        The unique attribute indicates that a concrete value of the element
+        must only occur once! In principle this is the same like the UNIQUE
+        constraint in relational databases. The attribute maybe omitted or
+        contain "false" to be ignored. If set to "true" it takes effect.
+        Currently this attribute is only allowed at numeric, string and time
+        elements.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="unique" type="dfasdl-bool"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="dfasdl-value">
+    <xs:attribute name="value" type="dfasdl-string-non-empty"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="dfasdl-xml-attribute-name">
+    <xs:attribute name="xml-attribute-name" type="dfasdl-string-non-empty"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="dfasdl-xml-attribute-parent">
+    <xs:attribute name="xml-attribute-parent" type="dfasdl-string-non-empty"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="dfasdl-xml-element-name">
+    <xs:attribute name="xml-element-name" type="dfasdl-string-non-empty"/>
+  </xs:attributeGroup>
+
+  <!--
+  –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+  Attribute groups
+  –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+  -->
+  <!--
+  Root attributes
+  -->
+  <xs:attributeGroup name="dfasdl-attributes-root">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Attributes for the root element of the DFASDL.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="semantic" type="dfasdl-semantic-space" use="required"/>
+    <xs:attributeGroup ref="dfasdl-default-encoding"/>
+    <xs:attributeGroup ref="dfasdl-start-sign"/>
+    <xs:attributeGroup ref="dfasdl-stop-sign"/>
+  </xs:attributeGroup>
+
+  <!--
+  Basic attributes
+  -->
+  <xs:attributeGroup name="dfasdl-attributes-elementary">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Elementary attributes for all element besides the root element.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="dfasdl-encoding"/>
+    <xs:attributeGroup ref="dfasdl-class"/>
+    <xs:attributeGroup ref="dfasdl-s"/>
+    <xs:attributeGroup ref="dfasdl-start-sign"/>
+    <xs:attributeGroup ref="dfasdl-stop-sign"/>
+    <xs:attributeGroup ref="dfasdl-correct-offset"/>
+    <xs:attributeGroup ref="dfasdl-storage-path"/>
+    <xs:attributeGroup ref="dfasdl-attributes-json-basic"/>
+    <xs:attributeGroup ref="dfasdl-xml-element-name"/>
+  </xs:attributeGroup>
+
+  <xs:attributeGroup name="dfasdl-attributes-base">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Base attributes with optional ID.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="dfasdl-attributes-elementary"/>
+    <xs:attributeGroup ref="dfasdl-id"/>
+  </xs:attributeGroup>
+
+  <xs:attributeGroup name="dfasdl-attributes-base-id">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Base attributes with required ID.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="dfasdl-attributes-elementary"/>
+    <xs:attributeGroup ref="dfasdl-id-required"/>
+  </xs:attributeGroup>
+
+  <xs:attributeGroup name="dfasdl-attributes-base-format">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Format attributes where the format is not required.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="dfasdl-format"/>
+  </xs:attributeGroup>
+
+  <xs:attributeGroup name="dfasdl-attributes-base-format-required">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Format attributes where the format is required.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="dfasdl-format-required"/>
+  </xs:attributeGroup>
+
+  <xs:attributeGroup name="dfasdl-attributes-json-basic">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        JSON specific attributes.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="dfasdl-json-attribute-name"/>
+  </xs:attributeGroup>
+
+  <xs:attributeGroup name="dfasdl-attributes-database-basic">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Database specific attributes that are only allowed for data elements.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="dfasdl-db-column-name"/>
+  </xs:attributeGroup>
+
+  <xs:attributeGroup name="dfasdl-attributes-xml-attributes">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        XML specific attributes that are used to extract data from xml attributes. ;-)
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="dfasdl-xml-attribute-name"/>
+    <xs:attributeGroup ref="dfasdl-xml-attribute-parent"/>
+  </xs:attributeGroup>
+
+  <!--
+  Structural element attributes
+  -->
+  <!-- choice attributes -->
+  <xs:attributeGroup name="dfasdl-attributes-choice">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Attributes for the choice element.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="dfasdl-attributes-base"/>
+  </xs:attributeGroup>
+
+  <!-- database specific attributes -->
+  <xs:attributeGroup name="dfasdl-attributes-database">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Attributes that describe database specific properties like SELECT, INSERT and UPDATE.
+        Beware that a definition of the UPDATE attribute takes precedense over the INSERT attribute.
+        This means that you should decide whether you want to use INSERT or UPDATE for the target database!
+        An attribute for the primary key on the table may be specified.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="dfasdl-db-insert"/>
+    <xs:attributeGroup ref="dfasdl-db-primary-key"/>
+    <xs:attributeGroup ref="dfasdl-db-select"/>
+    <xs:attributeGroup ref="dfasdl-db-update"/>
+  </xs:attributeGroup>
+
+  <!-- sequence attributes -->
+  <xs:attributeGroup name="dfasdl-attributes-sequence">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Attributes for the sequence element.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="dfasdl-attributes-base"/>
+    <xs:attributeGroup ref="dfasdl-filter"/>
+    <xs:attributeGroup ref="dfasdl-keepID"/>
+    <xs:attributeGroup ref="dfasdl-max"/>
+    <xs:attributeGroup ref="dfasdl-min"/>
+    <xs:attributeGroup ref="dfasdl-attributes-database"/>
+  </xs:attributeGroup>
+
+  <!-- fixed sequence attributes -->
+  <xs:attributeGroup name="dfasdl-attributes-fixed-sequence">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Attributes for the fixed sequence element.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="dfasdl-attributes-base"/>
+    <xs:attributeGroup ref="dfasdl-count-required"/>
+    <xs:attributeGroup ref="dfasdl-keepID"/>
+    <xs:attributeGroup ref="dfasdl-attributes-database"/>
+  </xs:attributeGroup>
+
+  <!-- customid attributes -->
+  <xs:attributeGroup name="dfasdl-attributes-cid">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Attributes for the cid sequence element.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="dfasdl-attributes-base"/>
+  </xs:attributeGroup>
+
+  <!-- reference attributes -->
+  <xs:attributeGroup name="dfasdl-attributes-reference">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Attributes for the reference element.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="dfasdl-attributes-base"/>
+    <xs:attributeGroup ref="dfasdl-sid-required"/>
+    <xs:attributeGroup ref="dfasdl-value"/>
+  </xs:attributeGroup>
+
+  <!--
+  Data element attributes
+  -->
+  <!-- numeric attributes -->
+  <xs:attributeGroup name="dfasdl-attributes-numeric">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Attributes for the numeric element.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="dfasdl-attributes-base"/>
+    <xs:attributeGroup ref="dfasdl-attributes-database-basic"/>
+    <xs:attributeGroup ref="dfasdl-db-auto-increment"/>
+    <xs:attributeGroup ref="dfasdl-db-foreign-key"/>
+    <xs:attributeGroup ref="dfasdl-defaultnum"/>
+    <xs:attributeGroup ref="dfasdl-length"/>
+    <xs:attributeGroup ref="dfasdl-max-digits"/>
+    <xs:attributeGroup ref="dfasdl-precision"/>
+    <xs:attributeGroup ref="dfasdl-unique"/>
+  </xs:attributeGroup>
+
+  <!-- formatted numeric attributes -->
+  <xs:attributeGroup name="dfasdl-attributes-formatted-numeric">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Attributes for the formated numeric element.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="dfasdl-attributes-base"/>
+    <xs:attributeGroup ref="dfasdl-attributes-base-format-required"/>
+    <xs:attributeGroup ref="dfasdl-attributes-database-basic"/>
+    <xs:attributeGroup ref="dfasdl-db-auto-increment"/>
+    <xs:attributeGroup ref="dfasdl-db-foreign-key"/>
+    <xs:attributeGroup ref="dfasdl-max-digits"/>
+    <xs:attributeGroup ref="dfasdl-max-precision"/>
+    <xs:attribute name="defaultnum" type="dfasdl-formatted-numeric"/>
+    <xs:attribute name="decimal-separator" type="dfasdl-numeric-decimal-separator" default=","/>
+    <xs:attributeGroup ref="dfasdl-unique"/>
+  </xs:attributeGroup>
+
+  <!-- string attributes -->
+  <xs:attributeGroup name="dfasdl-attributes-string">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Attributes for the string element.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="dfasdl-attributes-base"/>
+    <xs:attributeGroup ref="dfasdl-attributes-base-format"/>
+    <xs:attributeGroup ref="dfasdl-attributes-database-basic"/>
+    <xs:attributeGroup ref="dfasdl-db-foreign-key"/>
+    <xs:attributeGroup ref="dfasdl-defaultstr"/>
+    <xs:attributeGroup ref="dfasdl-length"/>
+    <xs:attributeGroup ref="dfasdl-max-length"/>
+    <xs:attributeGroup ref="dfasdl-trim"/>
+    <xs:attributeGroup ref="dfasdl-unique"/>
+  </xs:attributeGroup>
+
+  <!-- formatted string attributes -->
+  <xs:attributeGroup name="dfasdl-attributes-formatted-string">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Attributes for the formated string element.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="dfasdl-attributes-base"/>
+    <xs:attributeGroup ref="dfasdl-attributes-base-format-required"/>
+    <xs:attributeGroup ref="dfasdl-attributes-database-basic"/>
+    <xs:attributeGroup ref="dfasdl-db-foreign-key"/>
+    <xs:attributeGroup ref="dfasdl-defaultstr"/>
+    <xs:attributeGroup ref="dfasdl-trim"/>
+    <xs:attributeGroup ref="dfasdl-unique"/>
+  </xs:attributeGroup>
+
+  <!--
+  Time element attributes
+  -->
+  <xs:attributeGroup name="dfasdl-attributes-date">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Attributes for the date elements.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="dfasdl-attributes-base"/>
+    <xs:attributeGroup ref="dfasdl-attributes-database-basic"/>
+    <xs:attributeGroup ref="dfasdl-db-foreign-key"/>
+    <xs:attributeGroup ref="dfasdl-unique"/>
+  </xs:attributeGroup>
+
+  <xs:attributeGroup name="dfasdl-attributes-formatted-time">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Attributes for the formatted date elements.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="dfasdl-attributes-base"/>
+    <xs:attributeGroup ref="dfasdl-attributes-base-format-required"/>
+    <xs:attributeGroup ref="dfasdl-attributes-database-basic"/>
+    <xs:attributeGroup ref="dfasdl-db-foreign-key"/>
+    <xs:attributeGroup ref="dfasdl-defaultstr"/>
+    <xs:attributeGroup ref="dfasdl-unique"/>
+  </xs:attributeGroup>
+
+  <!--
+  Binary
+  -->
+  <xs:attributeGroup name="dfasdl-attributes-binary">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Attributes for the binary element.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="dfasdl-attributes-base"/>
+    <xs:attributeGroup ref="dfasdl-attributes-database-basic"/>
+    <xs:attributeGroup ref="dfasdl-byteOrder"/>
+    <xs:attributeGroup ref="dfasdl-mime"/>
+  </xs:attributeGroup>
+
+  <xs:attributeGroup name="dfasdl-attributes-binary64">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Attributes for the binary base 64 element.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="dfasdl-attributes-base"/>
+    <xs:attributeGroup ref="dfasdl-attributes-database-basic"/>
+    <xs:attributeGroup ref="dfasdl-mime"/>
+  </xs:attributeGroup>
+
+  <xs:attributeGroup name="dfasdl-attributes-binaryHex">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Attributes for the binary Hex element.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="dfasdl-attributes-base"/>
+    <xs:attributeGroup ref="dfasdl-attributes-database-basic"/>
+    <xs:attributeGroup ref="dfasdl-mime"/>
+  </xs:attributeGroup>
+
+  <!--
+  Expression element attributes
+  -->
+  <!-- constant attributes -->
+  <xs:attributeGroup name="dfasdl-attributes-const">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Attributes for the constant element.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="dfasdl-attributes-base-id"/>
+  </xs:attributeGroup>
+
+  <!-- scala expression -->
+  <xs:attributeGroup name="dfasdl-attributes-scala-expression">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Attributes for the scala expression.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="dfasdl-attributes-base"/>
+  </xs:attributeGroup>
+
+  <!-- ################## -->
+  <!-- PART OF ELEMENTARY -->
+  <!-- ################## -->
+
+  <!--
+  –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+  Basic Types
+
+  Basic types are mostly SimpleTypes which are not depending on specific
+  limitations of DFASDL attributes or elements.
+  –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+  -->
+
+  <!--
+   Character Strings
+   -->
+  <xs:simpleType name="dfasdl-empty">
+    <xs:annotation>
+      <xs:documentation>
+        An empty string has no whitespace and a length of 0.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:whiteSpace value="preserve"/>
+      <xs:length value="0"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="dfasdl-string-non-empty">
+    <xs:annotation>
+      <xs:documentation>
+        A non-empty string must have at least one non-whitespace sign.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:whiteSpace value="preserve"/>
+      <xs:pattern value="[\w\W]+"/>
+      <xs:minLength value="1"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="dfasdl-empty-or-string">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        A character string or empty.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:union memberTypes="dfasdl-empty dfasdl-string-non-empty"/>
+  </xs:simpleType>
+
+  <xs:simpleType name="dfasdl-separator">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Attribute that defines a separator for an element.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="dfasdl-string-non-empty"/>
+  </xs:simpleType>
+
+  <xs:simpleType name="dfasdl-startsign">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Attribute that defines a start sign that separates the content
+        in the respective element.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="dfasdl-string-non-empty"/>
+  </xs:simpleType>
+
+  <xs:simpleType name="dfasdl-stopsign">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Attribute that defines a stop sign that separates the content
+        in the respective element.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="dfasdl-string-non-empty"/>
+  </xs:simpleType>
+
+  <xs:simpleType name="dfasdl-trim">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Attribute that defines a trim on the content.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="dfasdl-trimValues"/>
+  </xs:simpleType>
+
+  <xs:simpleType name="dfasdl-encoding">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Defines a valid encoding name which has to be one of the listed encodings below.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="big5"/>
+      <xs:enumeration value="big5-hkscs"/>
+      <xs:enumeration value="cesu-8"/>
+      <xs:enumeration value="euc-jp"/>
+      <xs:enumeration value="euc-kr"/>
+      <xs:enumeration value="gb18030"/>
+      <xs:enumeration value="gb2312"/>
+      <xs:enumeration value="gbk"/>
+      <xs:enumeration value="ibm-thai"/>
+      <xs:enumeration value="ibm00858"/>
+      <xs:enumeration value="ibm01140"/>
+      <xs:enumeration value="ibm01141"/>
+      <xs:enumeration value="ibm01142"/>
+      <xs:enumeration value="ibm01143"/>
+      <xs:enumeration value="ibm01144"/>
+      <xs:enumeration value="ibm01145"/>
+      <xs:enumeration value="ibm01146"/>
+      <xs:enumeration value="ibm01147"/>
+      <xs:enumeration value="ibm01148"/>
+      <xs:enumeration value="ibm01149"/>
+      <xs:enumeration value="ibm037"/>
+      <xs:enumeration value="ibm1026"/>
+      <xs:enumeration value="ibm1047"/>
+      <xs:enumeration value="ibm273"/>
+      <xs:enumeration value="ibm277"/>
+      <xs:enumeration value="ibm278"/>
+      <xs:enumeration value="ibm280"/>
+      <xs:enumeration value="ibm284"/>
+      <xs:enumeration value="ibm285"/>
+      <xs:enumeration value="ibm290"/>
+      <xs:enumeration value="ibm297"/>
+      <xs:enumeration value="ibm420"/>
+      <xs:enumeration value="ibm424"/>
+      <xs:enumeration value="ibm437"/>
+      <xs:enumeration value="ibm500"/>
+      <xs:enumeration value="ibm775"/>
+      <xs:enumeration value="ibm850"/>
+      <xs:enumeration value="ibm852"/>
+      <xs:enumeration value="ibm855"/>
+      <xs:enumeration value="ibm857"/>
+      <xs:enumeration value="ibm860"/>
+      <xs:enumeration value="ibm861"/>
+      <xs:enumeration value="ibm862"/>
+      <xs:enumeration value="ibm863"/>
+      <xs:enumeration value="ibm864"/>
+      <xs:enumeration value="ibm865"/>
+      <xs:enumeration value="ibm866"/>
+      <xs:enumeration value="ibm868"/>
+      <xs:enumeration value="ibm869"/>
+      <xs:enumeration value="ibm870"/>
+      <xs:enumeration value="ibm871"/>
+      <xs:enumeration value="ibm918"/>
+      <xs:enumeration value="iso-2022-cn"/>
+      <xs:enumeration value="iso-2022-jp"/>
+      <xs:enumeration value="iso-2022-jp-2"/>
+      <xs:enumeration value="iso-2022-kr"/>
+      <xs:enumeration value="iso-8859-1"/>
+      <xs:enumeration value="iso-8859-13"/>
+      <xs:enumeration value="iso-8859-15"/>
+      <xs:enumeration value="iso-8859-2"/>
+      <xs:enumeration value="iso-8859-3"/>
+      <xs:enumeration value="iso-8859-4"/>
+      <xs:enumeration value="iso-8859-5"/>
+      <xs:enumeration value="iso-8859-6"/>
+      <xs:enumeration value="iso-8859-7"/>
+      <xs:enumeration value="iso-8859-8"/>
+      <xs:enumeration value="iso-8859-9"/>
+      <xs:enumeration value="jis_x0201"/>
+      <xs:enumeration value="jis_x0212-1990"/>
+      <xs:enumeration value="koi8-r"/>
+      <xs:enumeration value="koi8-u"/>
+      <xs:enumeration value="shift_jis"/>
+      <xs:enumeration value="tis-620"/>
+      <xs:enumeration value="us-ascii"/>
+      <xs:enumeration value="utf-16"/>
+      <xs:enumeration value="utf-16be"/>
+      <xs:enumeration value="utf-16le"/>
+      <xs:enumeration value="utf-32"/>
+      <xs:enumeration value="utf-32be"/>
+      <xs:enumeration value="utf-32le"/>
+      <xs:enumeration value="utf-8"/>
+      <xs:enumeration value="windows-1250"/>
+      <xs:enumeration value="windows-1251"/>
+      <xs:enumeration value="windows-1252"/>
+      <xs:enumeration value="windows-1253"/>
+      <xs:enumeration value="windows-1254"/>
+      <xs:enumeration value="windows-1255"/>
+      <xs:enumeration value="windows-1256"/>
+      <xs:enumeration value="windows-1257"/>
+      <xs:enumeration value="windows-1258"/>
+      <xs:enumeration value="windows-31j"/>
+      <xs:enumeration value="x-big5-hkscs-2001"/>
+      <xs:enumeration value="x-big5-solaris"/>
+      <xs:enumeration value="x-compound_text"/>
+      <xs:enumeration value="x-euc-jp-linux"/>
+      <xs:enumeration value="x-euc-tw"/>
+      <xs:enumeration value="x-eucjp-open"/>
+      <xs:enumeration value="x-ibm1006"/>
+      <xs:enumeration value="x-ibm1025"/>
+      <xs:enumeration value="x-ibm1046"/>
+      <xs:enumeration value="x-ibm1097"/>
+      <xs:enumeration value="x-ibm1098"/>
+      <xs:enumeration value="x-ibm1112"/>
+      <xs:enumeration value="x-ibm1122"/>
+      <xs:enumeration value="x-ibm1123"/>
+      <xs:enumeration value="x-ibm1124"/>
+      <xs:enumeration value="x-ibm1166"/>
+      <xs:enumeration value="x-ibm1364"/>
+      <xs:enumeration value="x-ibm1381"/>
+      <xs:enumeration value="x-ibm1383"/>
+      <xs:enumeration value="x-ibm300"/>
+      <xs:enumeration value="x-ibm33722"/>
+      <xs:enumeration value="x-ibm737"/>
+      <xs:enumeration value="x-ibm833"/>
+      <xs:enumeration value="x-ibm834"/>
+      <xs:enumeration value="x-ibm856"/>
+      <xs:enumeration value="x-ibm874"/>
+      <xs:enumeration value="x-ibm875"/>
+      <xs:enumeration value="x-ibm921"/>
+      <xs:enumeration value="x-ibm922"/>
+      <xs:enumeration value="x-ibm930"/>
+      <xs:enumeration value="x-ibm933"/>
+      <xs:enumeration value="x-ibm935"/>
+      <xs:enumeration value="x-ibm937"/>
+      <xs:enumeration value="x-ibm939"/>
+      <xs:enumeration value="x-ibm942"/>
+      <xs:enumeration value="x-ibm942c"/>
+      <xs:enumeration value="x-ibm943"/>
+      <xs:enumeration value="x-ibm943c"/>
+      <xs:enumeration value="x-ibm948"/>
+      <xs:enumeration value="x-ibm949"/>
+      <xs:enumeration value="x-ibm949c"/>
+      <xs:enumeration value="x-ibm950"/>
+      <xs:enumeration value="x-ibm964"/>
+      <xs:enumeration value="x-ibm970"/>
+      <xs:enumeration value="x-iscii91"/>
+      <xs:enumeration value="x-iso-2022-cn-cns"/>
+      <xs:enumeration value="x-iso-2022-cn-gb"/>
+      <xs:enumeration value="x-iso-8859-11"/>
+      <xs:enumeration value="x-jis0208"/>
+      <xs:enumeration value="x-jisautodetect"/>
+      <xs:enumeration value="x-johab"/>
+      <xs:enumeration value="x-macarabic"/>
+      <xs:enumeration value="x-maccentraleurope"/>
+      <xs:enumeration value="x-maccroatian"/>
+      <xs:enumeration value="x-maccyrillic"/>
+      <xs:enumeration value="x-macdingbat"/>
+      <xs:enumeration value="x-macgreek"/>
+      <xs:enumeration value="x-machebrew"/>
+      <xs:enumeration value="x-maciceland"/>
+      <xs:enumeration value="x-macroman"/>
+      <xs:enumeration value="x-macromania"/>
+      <xs:enumeration value="x-macsymbol"/>
+      <xs:enumeration value="x-macthai"/>
+      <xs:enumeration value="x-macturkish"/>
+      <xs:enumeration value="x-macukraine"/>
+      <xs:enumeration value="x-ms932_0213"/>
+      <xs:enumeration value="x-ms950-hkscs"/>
+      <xs:enumeration value="x-ms950-hkscs-xp"/>
+      <xs:enumeration value="x-mswin-936"/>
+      <xs:enumeration value="x-pck"/>
+      <xs:enumeration value="x-sjis_0213"/>
+      <xs:enumeration value="x-utf-16le-bom"/>
+      <xs:enumeration value="x-utf-32be-bom"/>
+      <xs:enumeration value="x-utf-32le-bom"/>
+      <xs:enumeration value="x-windows-50220"/>
+      <xs:enumeration value="x-windows-50221"/>
+      <xs:enumeration value="x-windows-874"/>
+      <xs:enumeration value="x-windows-949"/>
+      <xs:enumeration value="x-windows-950"/>
+      <xs:enumeration value="x-windows-iso2022jp"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="dfasdl-format">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Defines a format that must match a string. A format is used to
+        validate the content of an element against the defined format.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="dfasdl-string-non-empty">
+      <!-- Scala Regexp: It is based on the regular expressions of the JDK since 1.4 -->
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="dfasdl-scala-code">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        A Scala code expression must start with a { and end with a }.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:pattern value="(\{[^\{].*\})|(\{\})" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="dfasdl-scala-expression">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        A Scala expression can contain Scala code expression.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:union memberTypes="dfasdl-string-non-empty dfasdl-scala-code"/>
+  </xs:simpleType>
+
+  <xs:simpleType name="dfasdl-mime">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        A Mime Media Type consists of a main type and a sub-type.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="dfasdl-string-non-empty">
+      <xs:pattern value="(text|image|audio|video|application|multipart|message){1,1}/(\S*)"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!--
+  Numeric
+  -->
+  <xs:simpleType name="dfasdl-numeric">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        A numerical value has:
+        <br/>
+        <ul>
+          <li>maybe a minus sign at the beginning</li>
+          <li>numerous digits</li>
+        </ul>
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:pattern value="-?[\d]+"/>
+      <xs:whiteSpace value="collapse"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="dfasdl-empty-or-numeric">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        A numerical value or empty.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:union memberTypes="dfasdl-empty dfasdl-numeric"/>
+  </xs:simpleType>
+
+  <xs:simpleType name="dfasdl-formatted-numeric">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        A formatted numerical value has:
+        <br/>
+        <ul>
+          <li>maybe a minus sign at the beginning</li>
+          <li>numerous digits</li>
+          <li>points and/or commas</li>
+        </ul>
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:pattern value="-?[\d\.,]+"/>
+      <xs:whiteSpace value="collapse"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="dfasdl-empty-or-formatted-numeric">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        A formatted numerical value or empty.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:union memberTypes="dfasdl-empty dfasdl-formatted-numeric"/>
+  </xs:simpleType>
+
+  <xs:simpleType name="dfasdl-numeric-decimal-separator">
+    <xs:annotation>
+      <xs:documentation>
+        Defines the character that is used to separate the decimal places of a number.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="dfasdl-decimal-separators"/>
+  </xs:simpleType>
+
+  <!--
+  Time
+  -->
+  <xs:simpleType name="dfasdl-date">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        A date value.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:union memberTypes="dfasdl-empty xs:date"/>
+  </xs:simpleType>
+
+  <xs:simpleType name="dfasdl-datetime">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        A datetime value.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:union memberTypes="dfasdl-empty xs:dateTime"/>
+  </xs:simpleType>
+
+  <xs:simpleType name="dfasdl-time">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        A time value.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:union memberTypes="dfasdl-empty xs:time"/>
+  </xs:simpleType>
+
+  <!--
+  Binary
+  -->
+  <xs:simpleType name="dfasdl-binary">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        A binary value.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="dfasdl-empty-or-string"/>
+  </xs:simpleType>
+
+  <xs:simpleType name="dfasdl-binary64">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        A value with hexadecimal-encoded binary data.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:union memberTypes="dfasdl-empty xs:hexBinary"/>
+  </xs:simpleType>
+
+  <xs:simpleType name="dfasdl-binaryHex">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        A value with Base64-encoded binary data.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:union memberTypes="dfasdl-empty xs:base64Binary"/>
+  </xs:simpleType>
+
+  <!--
+  –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+  Attribute types
+
+  Attribute types are types that are assigned to DFASDL attributes.
+  –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+  -->
+
+  <!--
+  Semantic
+  -->
+  <xs:simpleType name="dfasdl-semantic-spaces">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Semantic definitions that can be included into the DFASDL.
+        @todo: The user should select a XSD.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="custom" />
+      <xs:enumeration value="niem"/>
+      <xs:enumeration value="udef"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="dfasdl-semantic-space">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Attribute for the root element which defines the semantic
+        space of the document.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="dfasdl-semantic-spaces"/>
+  </xs:simpleType>
+
+  <xs:simpleType name="dfasdl-semantic-name">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Attribute for the elements which defines the semantic name.
+        The semantic name is the meaning of the element. e.g. nc:Person
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="dfasdl-string-non-empty"/>
+  </xs:simpleType>
+
+  <!--
+  General
+  -->
+  <xs:simpleType name="dfasdl-bool">
+    <xs:annotation>
+      <xs:documentation>
+        A boolean type can be true or false.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:boolean"/>
+  </xs:simpleType>
+
+  <!--
+  –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+  Element Types
+
+  Element types are types that are assigned to DFASDL elements.
+  –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+  -->
+
+  <!--
+  –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+  Enumerations
+  –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+  -->
+  <xs:simpleType name="dfasdl-byteOrderEnum">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="bigEndian" />
+      <xs:enumeration value="littleEndian" />
+      <xs:enumeration value="middleEndian" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="dfasdl-trimValues">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="left" />
+      <xs:enumeration value="right" />
+      <xs:enumeration value="both" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="dfasdl-decimal-separators">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="."/> <!-- decimal dot -->
+      <xs:enumeration value=","/> <!-- decimal comma -->
+      <xs:enumeration value="٫"/> <!-- Momayyez (used in the arabic countries) -->
+      <xs:enumeration value="⎖"/> <!-- Unicode defines a decimal separator key symbol -->
+    </xs:restriction>
+  </xs:simpleType>
+
+</xs:schema>
