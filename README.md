@@ -16,3 +16,6 @@ definition (xsd) and the official specification.
 It is cross build for scala 2.11 and 2.12.
 
 Releases are published on bintray and should be synced to maven central.
+
+The documentation is published using github pages and is available online
+at: https://dfasdl.github.io/dfasdl-core/

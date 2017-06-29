@@ -12,11 +12,10 @@ lazy val dfasdlCore =
     .settings(filterSettings)
     .settings(
       name := "dfasdl-core",
-      sourceDirectory in Asciidoctor := baseDirectory.value / "doc",
-      includeFilter in (Compile, filterResources) ~= { f => f || ("*.props" | "*.conf" | "*.properties" | "*.xml" | "*.xsd") },
-      (packageBin in Compile) := ((packageBin in Compile) dependsOn (filterResources in Compile)).value,
-      ghpagesNoJekyll := true,
-      git.remoteRepo := "git@github.com:DFASDL/dfasdl-core.git"
+      includeFilter in (Compile, filterResources) ~= { f =>
+        f || ("*.props" | "*.conf" | "*.properties" | "*.xml" | "*.xsd")
+      },
+      (packageBin in Compile) := ((packageBin in Compile) dependsOn (filterResources in Compile)).value
     )
 
 // *****************************************************************************
@@ -39,13 +38,14 @@ lazy val library =
 
 lazy val settings =
   commonSettings ++
+  documentationSettings ++
   gitSettings ++
   publishSettings
 
 lazy val commonSettings =
   Seq(
-    scalaVersion := "2.12.2",
-    crossScalaVersions := Seq("2.11.11", scalaVersion.value),
+    scalaVersion in ThisBuild := "2.12.2",
+    crossScalaVersions := Seq("2.12.2", "2.11.11"),
     organization := "org.dfasdl",
     organizationName := "Wegtam GmbH",
     startYear := Option(2014),
@@ -69,6 +69,13 @@ lazy val commonSettings =
     unmanagedSourceDirectories.in(Compile) := Seq(scalaSource.in(Compile).value),
     unmanagedSourceDirectories.in(Test) := Seq(scalaSource.in(Test).value)
 )
+
+lazy val documentationSettings =
+  Seq(
+    sourceDirectory in Asciidoctor := baseDirectory.value / "doc",
+    ghpagesNoJekyll := true,
+    git.remoteRepo := "git@github.com:DFASDL/dfasdl-core.git"
+  )
 
 lazy val gitSettings =
   Seq(
