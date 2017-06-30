@@ -1,5 +1,5 @@
 = DFASDL - Specification
-Jens Grassel; Andre Schütz <tech@wegtam.com>
+Jens Grassel; André Schütz <tech@wegtam.com>
 :doctype: book
 :toc: left
 :numbered:
