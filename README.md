@@ -15,7 +15,14 @@ definition (xsd) and the official specification.
 
 It is cross build for scala 2.11 and 2.12.
 
-Releases are published on bintray and should be synced to maven central.
+Releases are published on bintray and should be synced to jcenter. To use
+the bintray repository directly just add the appropriate resolver to your
+sbt configuration:
+
+```
+resolvers += "DFASDL" at "https://dl.bintray.com/wegtam/dfasdl"
+```
 
 The documentation is published using github pages and is available online
 at: https://dfasdl.github.io/dfasdl-core/
+
