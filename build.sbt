@@ -26,7 +26,7 @@ lazy val library =
   new {
     object Version {
       val scalaCheck = "1.13.5"
-      val scalaTest  = "3.0.3"
+      val scalaTest  = "3.0.4"
     }
     val scalaCheck = "org.scalacheck" %% "scalacheck" % Version.scalaCheck
     val scalaTest  = "org.scalatest"  %% "scalatest"  % Version.scalaTest
@@ -44,8 +44,8 @@ lazy val settings =
 
 lazy val commonSettings =
   Seq(
-    scalaVersion in ThisBuild := "2.12.2",
-    crossScalaVersions := Seq("2.12.2", "2.11.11"),
+    scalaVersion in ThisBuild := "2.12.3",
+    crossScalaVersions := Seq("2.12.3", "2.11.11"),
     organization := "org.dfasdl",
     organizationName := "Wegtam GmbH",
     startYear := Option(2014),
