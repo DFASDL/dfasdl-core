@@ -2,20 +2,13 @@
 // Projects
 // *****************************************************************************
 
-import sbtfilter.Plugin.FilterKeys._
-
 lazy val dfasdlCore =
   project
     .in(file("."))
     .enablePlugins(AsciidoctorPlugin, GitBranchPrompt, GitVersioning, GhpagesPlugin)
     .settings(settings)
-    .settings(filterSettings)
     .settings(
-      name := "dfasdl-core",
-      includeFilter in (Compile, filterResources) ~= { f =>
-        f || ("*.props" | "*.conf" | "*.properties" | "*.xml" | "*.xsd")
-      },
-      (packageBin in Compile) := ((packageBin in Compile) dependsOn (filterResources in Compile)).value
+      name := "dfasdl-core"
     )
 
 // *****************************************************************************
@@ -40,7 +33,8 @@ lazy val settings =
   commonSettings ++
   documentationSettings ++
   gitSettings ++
-  publishSettings
+  publishSettings ++
+  resourceFilterSettings
 
 lazy val commonSettings =
   Seq(
@@ -100,5 +94,29 @@ lazy val publishSettings =
       url("https://github.com/DFASDL/dfasdl-core"),
       "git@github.com:DFASDL/dfasdl-core.git"
     ))
+  )
+
+/*
+ * Resource filtering is rather tedious.
+ *
+ * First we have to exclude the `dfasdl.xsd` from the resources to
+ * avoid an error about duplicate dependencies upon packaging.
+ * Then we have to parse and filter it according to our needs in the
+ * `resourceGenerators` task which is only run upon `package` and `run`.
+ *
+ * All this using hardcoded filenames. :-(
+ */
+lazy val resourceFilterSettings =
+  Seq(
+    excludeFilter in unmanagedResources := "dfasdl.xsd",
+    resourceGenerators in Compile += Def.task {
+      // Replace the `${version}` token with the current version.
+      val s = (resourceDirectory in Compile).value / "org" / "dfasdl" / "dfasdl.xsd"
+      val sc = IO.read(s)
+      val tc = sc.replaceAll("""\$\{version\}""", version.value)
+      val t = (resourceManaged in Compile).value / "org" / "dfasdl" / "dfasdl.xsd"
+      IO.write(t, tc)
+      Seq(t)
+    }.taskValue
   )
 
