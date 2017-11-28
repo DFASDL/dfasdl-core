@@ -38,8 +38,8 @@ lazy val settings =
 
 lazy val commonSettings =
   Seq(
-    scalaVersion in ThisBuild := "2.12.3",
-    crossScalaVersions := Seq("2.12.3", "2.11.11"),
+    scalaVersion in ThisBuild := "2.12.4",
+    crossScalaVersions := Seq("2.12.4", "2.11.12"),
     organization := "org.dfasdl",
     organizationName := "Wegtam GmbH",
     startYear := Option(2014),
