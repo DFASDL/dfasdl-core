@@ -22,6 +22,11 @@ Please follow the listed conventions when editing this file:
 
 ## Unreleased
 
+## 1.0.1 (2020-02-05)
+
+- cross publish for Scala 2.11, 2.12 and 2.13
+- adjust compiler settings
+
 ## 1.0 (2017-06-28)
 
 - initial public release
