@@ -13,7 +13,7 @@ automatically.
 This repository contains the core module which consists of the xschema 
 definition (xsd) and the official specification.
 
-It is cross build for scala 2.11 and 2.12.
+It is cross build for Scala 2.11, 2.12 and 2.13.
 
 Releases are published on bintray and should be synced to jcenter. To use
 the bintray repository directly just add the appropriate resolver to your
