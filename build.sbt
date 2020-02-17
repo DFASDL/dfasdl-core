@@ -27,8 +27,8 @@ lazy val library =
     object Version {
       val enumeratum = "1.5.15"
       val refined    = "0.9.12"
-      val scalaCheck = "1.13.5"
-      val scalaTest  = "3.0.4"
+      val scalaCheck = "1.14.3"
+      val scalaTest  = "3.0.8"
     }
     val enumeratumCore    = "com.beachape"   %% "enumeratum"         % Version.enumeratum
     val refinedCore       = "eu.timepit"     %% "refined"            % Version.refined
