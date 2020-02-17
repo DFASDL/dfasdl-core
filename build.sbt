@@ -8,7 +8,14 @@ lazy val dfasdlCore =
     .enablePlugins(AsciidoctorPlugin, GitBranchPrompt, GitVersioning, GhpagesPlugin)
     .settings(settings)
     .settings(
-      name := "dfasdl-core"
+      name := "dfasdl-core",
+      libraryDependencies ++= Seq(
+        library.enumeratumCore,
+        library.refinedCore,
+        library.refinedScalaCheck % Test,
+        library.scalaCheck        % Test,
+        library.scalaTest         % Test
+      )
     )
 
 // *****************************************************************************
@@ -18,11 +25,16 @@ lazy val dfasdlCore =
 lazy val library =
   new {
     object Version {
+      val enumeratum = "1.5.15"
+      val refined    = "0.9.12"
       val scalaCheck = "1.13.5"
       val scalaTest  = "3.0.4"
     }
-    val scalaCheck = "org.scalacheck" %% "scalacheck" % Version.scalaCheck
-    val scalaTest  = "org.scalatest"  %% "scalatest"  % Version.scalaTest
+    val enumeratumCore    = "com.beachape"   %% "enumeratum"         % Version.enumeratum
+    val refinedCore       = "eu.timepit"     %% "refined"            % Version.refined
+    val refinedScalaCheck = "eu.timepit"     %% "refined-scalacheck" % Version.refined
+    val scalaCheck        = "org.scalacheck" %% "scalacheck"         % Version.scalaCheck
+    val scalaTest         = "org.scalatest"  %% "scalatest"          % Version.scalaTest
   }
 
 // *****************************************************************************
@@ -34,7 +46,8 @@ lazy val settings =
   documentationSettings ++
   gitSettings ++
   publishSettings ++
-  resourceFilterSettings
+  resourceFilterSettings ++
+  scalafmtSettings
 
 def compilerSettings(sv: String) =
   CrossVersion.partialVersion(sv) match {
@@ -123,7 +136,8 @@ lazy val commonSettings =
     licenses += ("MPL-2.0", url("https://www.mozilla.org/en-US/MPL/2.0/")),
     scalacOptions ++= compilerSettings(scalaVersion.value),
     unmanagedSourceDirectories.in(Compile) := Seq(scalaSource.in(Compile).value),
-    unmanagedSourceDirectories.in(Test) := Seq(scalaSource.in(Test).value)
+    unmanagedSourceDirectories.in(Test) := Seq(scalaSource.in(Test).value),
+    wartremoverWarnings in (Compile, compile) ++= Warts.unsafe
 )
 
 lazy val documentationSettings =
@@ -182,3 +196,7 @@ lazy val resourceFilterSettings =
     }.taskValue
   )
 
+lazy val scalafmtSettings =
+  Seq(
+    scalafmtOnCompile := true,
+  )
