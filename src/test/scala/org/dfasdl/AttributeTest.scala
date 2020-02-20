@@ -14,29 +14,29 @@ import org.scalacheck.{ Arbitrary, Gen }
 import org.scalatest.{ MustMatchers, WordSpec }
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
-class ElementTest extends WordSpec with MustMatchers with ScalaCheckPropertyChecks {
+class AttributeTest extends WordSpec with MustMatchers with ScalaCheckPropertyChecks {
 
-  private val element: Gen[Element]                         = Gen.oneOf(Element.values.toList)
-  private implicit val arbitraryElement: Arbitrary[Element] = Arbitrary(element)
+  private val attribute: Gen[Attribute]                         = Gen.oneOf(Attribute.values.toList)
+  private implicit val arbitraryAttribute: Arbitrary[Attribute] = Arbitrary(attribute)
 
-  "Element#from" when {
-    "tag name is invalid" must {
+  "Attribute#from" when {
+    "name is invalid" must {
       "return an empty Option" in {
-        forAll("tag name") { s: String =>
+        forAll("name") { s: String =>
           val n = NonEmptyString.from(s)
-          val t = n.fold(_ => false, t => Element.values.exists(_.tagName === t))
+          val t = n.fold(_ => false, t => Attribute.values.exists(_.name === t))
           whenever(n.isLeft || !t) {
-            Element.from(s) must be(empty)
+            Attribute.from(s) must be(empty)
           }
         }
       }
     }
 
-    "tag name is valid" must {
-      "return the element type" in {
-        forAll("element") { e: Element =>
-          val s: String = e.tagName
-          Element.from(s) must contain(e)
+    "name is valid" must {
+      "return the attribute type" in {
+        forAll("attribute") { e: Attribute =>
+          val s: String = e.name
+          Attribute.from(s) must contain(e)
         }
       }
     }

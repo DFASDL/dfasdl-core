@@ -2,10 +2,19 @@
 // Projects
 // *****************************************************************************
 
+// Calculate the current year for usage in copyright notices and license headers.
+lazy val currentYear: Int = java.time.OffsetDateTime.now().getYear
+
 lazy val dfasdlCore =
   project
     .in(file("."))
-    .enablePlugins(AsciidoctorPlugin, GitBranchPrompt, GitVersioning, GhpagesPlugin)
+    .enablePlugins(
+      AsciidoctorPlugin,
+      AutomateHeaderPlugin,
+      GitBranchPrompt,
+      GitVersioning,
+      GhpagesPlugin
+    )
     .settings(settings)
     .settings(
       name := "dfasdl-core",
@@ -169,6 +178,9 @@ lazy val commonSettings =
     organizationName := "Wegtam GmbH",
     startYear := Option(2014),
     licenses += ("MPL-2.0", url("https://www.mozilla.org/en-US/MPL/2.0/")),
+    headerLicense := Some(
+      HeaderLicense.MPLv2(s"2014 - $currentYear", "Contributors as noted in the AUTHORS.md file")
+    ),
     scalacOptions ++= compilerSettings(scalaVersion.value),
     addCompilerPlugin("com.olegpy"    %% "better-monadic-for" % "0.3.1"),
     addCompilerPlugin("org.typelevel" %% "kind-projector"     % "0.10.3"),

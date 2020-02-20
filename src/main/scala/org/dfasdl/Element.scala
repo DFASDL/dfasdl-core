@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2014 - 2020 Contributors as noted in the AUTHORS.md file
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
+
 package org.dfasdl
 
 import enumeratum._
@@ -26,7 +34,7 @@ object Element extends Enum[Element] {
   /**
     * Return an element type corresponding to the given tag name.
     *
-    * @param s A string containing an XML tag name.
+    * @param tagName A string containing an XML tag name.
     * @return An option to the corresponding DFASDL element type.
     */
   def from(tagName: String): Option[Element] =

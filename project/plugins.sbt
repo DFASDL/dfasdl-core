@@ -1,6 +1,7 @@
 addSbtPlugin("org.foundweekends" % "sbt-bintray"     % "0.5.1")
 addSbtPlugin("com.typesafe.sbt"  % "sbt-ghpages"     % "0.6.2")
 addSbtPlugin("com.typesafe.sbt"  % "sbt-git"         % "1.0.0")
+addSbtPlugin("de.heikoseeberger" % "sbt-header"      % "5.4.0")
 addSbtPlugin("com.jsuereth"      % "sbt-pgp"         % "2.0.1")
 addSbtPlugin("org.scalameta"     % "sbt-scalafmt"    % "2.3.1")
 addSbtPlugin("org.scoverage"     % "sbt-scoverage"   % "1.6.1")
