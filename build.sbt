@@ -2,13 +2,29 @@
 // Projects
 // *****************************************************************************
 
+// Calculate the current year for usage in copyright notices and license headers.
+lazy val currentYear: Int = java.time.OffsetDateTime.now().getYear
+
 lazy val dfasdlCore =
   project
     .in(file("."))
-    .enablePlugins(AsciidoctorPlugin, GitBranchPrompt, GitVersioning, GhpagesPlugin)
+    .enablePlugins(
+      AsciidoctorPlugin,
+      AutomateHeaderPlugin,
+      GitBranchPrompt,
+      GitVersioning,
+      GhpagesPlugin
+    )
     .settings(settings)
     .settings(
-      name := "dfasdl-core"
+      name := "dfasdl-core",
+      libraryDependencies ++= Seq(
+        library.enumeratumCore,
+        library.refinedCore,
+        library.refinedScalaCheck % Test,
+        library.scalaCheck        % Test,
+        library.scalaTest         % Test
+      )
     )
 
 // *****************************************************************************
@@ -18,11 +34,16 @@ lazy val dfasdlCore =
 lazy val library =
   new {
     object Version {
-      val scalaCheck = "1.13.5"
-      val scalaTest  = "3.0.4"
+      val enumeratum = "1.5.15"
+      val refined    = "0.9.12"
+      val scalaCheck = "1.14.3"
+      val scalaTest  = "3.0.8"
     }
-    val scalaCheck = "org.scalacheck" %% "scalacheck" % Version.scalaCheck
-    val scalaTest  = "org.scalatest"  %% "scalatest"  % Version.scalaTest
+    val enumeratumCore    = "com.beachape"   %% "enumeratum"         % Version.enumeratum
+    val refinedCore       = "eu.timepit"     %% "refined"            % Version.refined
+    val refinedScalaCheck = "eu.timepit"     %% "refined-scalacheck" % Version.refined
+    val scalaCheck        = "org.scalacheck" %% "scalacheck"         % Version.scalaCheck
+    val scalaTest         = "org.scalatest"  %% "scalatest"          % Version.scalaTest
   }
 
 // *****************************************************************************
@@ -34,11 +55,83 @@ lazy val settings =
   documentationSettings ++
   gitSettings ++
   publishSettings ++
-  resourceFilterSettings
+  resourceFilterSettings ++
+  scalafmtSettings
 
 def compilerSettings(sv: String) =
   CrossVersion.partialVersion(sv) match {
-    case Some((2, 13)) =>
+    case Some((2, 11)) =>
+      Seq(
+      "-deprecation",
+      "-encoding", "UTF-8",
+      "-explaintypes",
+      "-feature",
+      "-language:higherKinds",
+      "-target:jvm-1.8",
+      "-unchecked",
+      "-Xcheckinit",
+      "-Xfatal-warnings",
+      "-Xfuture",
+      "-Xlint:adapted-args",
+      "-Xlint:by-name-right-associative",
+      "-Xlint:delayedinit-select",
+      "-Xlint:doc-detached",
+      "-Xlint:inaccessible",
+      "-Xlint:infer-any",
+      "-Xlint:missing-interpolator",
+      "-Xlint:nullary-override",
+      "-Xlint:nullary-unit",
+      "-Xlint:option-implicit",
+      "-Xlint:package-object-classes",
+      "-Xlint:poly-implicit-overload",
+      "-Xlint:private-shadow",
+      "-Xlint:stars-align",
+      "-Xlint:type-parameter-shadow",
+      "-Xlint:unsound-match",
+      "-Ydelambdafy:method",
+      "-Yno-adapted-args",
+      "-Ypartial-unification",
+      "-Ywarn-numeric-widen",
+      "-Ywarn-unused-import",
+      "-Ywarn-value-discard"
+    )
+    case Some((2, 12)) =>
+      Seq(
+      "-deprecation",
+      "-encoding", "UTF-8",
+      "-explaintypes",
+      "-feature",
+      "-language:higherKinds",
+      "-target:jvm-1.8",
+      "-unchecked",
+      "-Xcheckinit",
+      "-Xfatal-warnings",
+      "-Xfuture",
+      "-Xlint:adapted-args",
+      "-Xlint:by-name-right-associative",
+      "-Xlint:constant",
+      "-Xlint:delayedinit-select",
+      "-Xlint:doc-detached",
+      "-Xlint:inaccessible",
+      "-Xlint:infer-any",
+      "-Xlint:missing-interpolator",
+      "-Xlint:nullary-override",
+      "-Xlint:nullary-unit",
+      "-Xlint:option-implicit",
+      "-Xlint:package-object-classes",
+      "-Xlint:poly-implicit-overload",
+      "-Xlint:private-shadow",
+      "-Xlint:stars-align",
+      "-Xlint:type-parameter-shadow",
+      "-Xlint:unsound-match",
+      "-Ydelambdafy:method",
+      "-Yno-adapted-args",
+      "-Ypartial-unification",
+      "-Ywarn-numeric-widen",
+      "-Ywarn-unused-import",
+      "-Ywarn-value-discard"
+    )
+    case _ =>
       Seq(
 	"-deprecation",
 	"-explaintypes",
@@ -75,55 +168,25 @@ def compilerSettings(sv: String) =
 	"-Ycache-plugin-class-loader:last-modified",
 	"-Ycache-macro-class-loader:last-modified",
       )
-    case _ =>
-      Seq(
-      "-deprecation",
-      "-encoding", "UTF-8",
-      "-explaintypes",
-      "-feature",
-      "-language:higherKinds",
-      "-target:jvm-1.8",
-      "-unchecked",
-      "-Xcheckinit",
-      "-Xfatal-warnings",
-      "-Xfuture",
-      "-Xlint:adapted-args",
-      "-Xlint:by-name-right-associative",
-      "-Xlint:constant",
-      "-Xlint:delayedinit-select",
-      "-Xlint:doc-detached",
-      "-Xlint:inaccessible",
-      "-Xlint:infer-any",
-      "-Xlint:missing-interpolator",
-      "-Xlint:nullary-override",
-      "-Xlint:nullary-unit",
-      "-Xlint:option-implicit",
-      "-Xlint:package-object-classes",
-      "-Xlint:poly-implicit-overload",
-      "-Xlint:private-shadow",
-      "-Xlint:stars-align",
-      "-Xlint:type-parameter-shadow",
-      "-Xlint:unsound-match",
-      "-Ydelambdafy:method",
-      "-Yno-adapted-args",
-      "-Ypartial-unification",
-      "-Ywarn-numeric-widen",
-      "-Ywarn-unused-import",
-      "-Ywarn-value-discard"
-    )
   }
 
 lazy val commonSettings =
   Seq(
-    scalaVersion in ThisBuild := "2.12.10",
-    crossScalaVersions := Seq("2.13.1", "2.12.10", "2.11.12"),
+    scalaVersion in ThisBuild := "2.13.1",
+    crossScalaVersions := Seq(scalaVersion.value, "2.12.10", "2.11.12"),
     organization := "org.dfasdl",
     organizationName := "Wegtam GmbH",
     startYear := Option(2014),
     licenses += ("MPL-2.0", url("https://www.mozilla.org/en-US/MPL/2.0/")),
+    headerLicense := Some(
+      HeaderLicense.MPLv2(s"2014 - $currentYear", "Contributors as noted in the AUTHORS.md file")
+    ),
     scalacOptions ++= compilerSettings(scalaVersion.value),
+    addCompilerPlugin("com.olegpy"    %% "better-monadic-for" % "0.3.1"),
+    addCompilerPlugin("org.typelevel" %% "kind-projector"     % "0.10.3"),
     unmanagedSourceDirectories.in(Compile) := Seq(scalaSource.in(Compile).value),
-    unmanagedSourceDirectories.in(Test) := Seq(scalaSource.in(Test).value)
+    unmanagedSourceDirectories.in(Test) := Seq(scalaSource.in(Test).value),
+    wartremoverWarnings in (Compile, compile) ++= Warts.unsafe
 )
 
 lazy val documentationSettings =
@@ -182,3 +245,7 @@ lazy val resourceFilterSettings =
     }.taskValue
   )
 
+lazy val scalafmtSettings =
+  Seq(
+    scalafmtOnCompile := true,
+  )

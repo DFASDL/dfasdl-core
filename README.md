@@ -1,6 +1,9 @@
 # DFASDL - Data Format and Semantics Description Language
 
-[ ![Download](https://api.bintray.com/packages/wegtam/dfasdl/dfasdl-core/images/download.svg) ](https://bintray.com/wegtam/dfasdl/dfasdl-core/_latestVersion)
+[![Build Status](https://travis-ci.org/DFASDL/dfasdl-core.svg?branch=master)](https://travis-ci.org/DFASDL/dfasdl-core)
+[![codecov](https://codecov.io/gh/DFASDL/dfasdl-core/branch/master/graph/badge.svg)](https://codecov.io/gh/DFASDL/dfasdl-core)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/339f826d6939484fb5eab7bce1ba07bc)](https://www.codacy.com/gh/DFASDL/dfasdl-core)
+[![Download](https://api.bintray.com/packages/wegtam/dfasdl/dfasdl-core/images/download.svg) ](https://bintray.com/wegtam/dfasdl/dfasdl-core/_latestVersion)
 
 The DFASDL is a language based upon [XML
 Schema](http://www.w3.org/XML/Schema) that can be used to describe data
