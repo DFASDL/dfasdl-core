@@ -22,6 +22,8 @@ Please follow the listed conventions when editing this file:
 
 ## Unreleased
 
+## 1.1.0 (2020-02-27)
+
 ### Added
 
 - basic Scala types for the XML elements and attributes of the DFASDL
